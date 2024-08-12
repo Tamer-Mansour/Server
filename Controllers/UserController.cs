@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Server.DTOs.UserDTOs;
 using Server.Models;
@@ -132,6 +134,46 @@ namespace Server.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+        [Authorize]
+        [HttpGet("Detail")]
+        public async Task<ActionResult<UserDetailDto>> GetUserDetail()
+        {
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(currentUserId);
+            if (user == null)
+            {
+                return NotFound(new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "User Not Found",
+                });
+
+            }
+            return Ok(new UserDetailDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                FUllName = user.FullName,
+                Roles = [.. await _userManager.GetRolesAsync(user)],
+                PhoneNumber = user.PhoneNumber,
+                //PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                AccessFailedCount = user.AccessFailedCount,
+            });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<UserDetailDto>>> GetUsers()
+        {
+            var users = await _userManager.Users.Select(u => new UserDetailDto
+            {
+                Id = u.Id,
+                Email = u.Email,
+                FUllName = u.FullName,
+                Roles = _userManager.GetRolesAsync(u).Result.ToArray()
+            }).ToListAsync();
+            return Ok(users);
         }
     }
 }
