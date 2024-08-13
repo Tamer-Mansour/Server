@@ -25,7 +25,7 @@ namespace Server.Controllers
             _roleManager = roleManager;
             _configuration = configuration;
         }
-
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponseDto>> Register(RegisterDto registerDto)
         {
@@ -66,6 +66,7 @@ namespace Server.Controllers
             });
         }
 
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult<AuthResponseDto>> Login(LoginDto loginDto)
         {
@@ -174,6 +175,116 @@ namespace Server.Controllers
                 Roles = _userManager.GetRolesAsync(u).Result.ToArray()
             }).ToListAsync();
             return Ok(users);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<ActionResult<AuthResponseDto>> ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+            if (user == null)
+            {
+                return BadRequest(new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "No user found with this email"
+                });
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordDto.Token, resetPasswordDto.NewPassword);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Error resetting password"
+                });
+            }
+
+            return Ok(new AuthResponseDto
+            {
+                IsSuccess = true,
+                Message = "Password reset successfully"
+            });
+        }
+
+        [Authorize]
+        [HttpPut("edit/{userId}")]
+        public async Task<ActionResult<AuthResponseDto>> EditProfile(string userId, EditProfileDto editProfileDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var isAdmin = User.IsInRole("admin");
+            if (!isAdmin && currentUserId != userId)
+            {
+                return Forbid();
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound(new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "User Not Found"
+                });
+            }
+
+            user.FullName = editProfileDto.FullName ?? user.FullName;
+            user.Email = editProfileDto.Email ?? user.Email;
+            user.PhoneNumber = editProfileDto.PhoneNumber ?? user.PhoneNumber;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Error updating profile"
+                });
+            }
+
+            return Ok(new AuthResponseDto
+            {
+                IsSuccess = true,
+                Message = "Profile updated successfully"
+            });
+        }
+
+        [Authorize(Roles = "admin")]
+        [HttpDelete("{userId}")]
+        public async Task<ActionResult<AuthResponseDto>> HardDeleteUser(string userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound(new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "User not found"
+                });
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Error deleting user"
+                });
+            }
+
+            return Ok(new AuthResponseDto
+            {
+                IsSuccess = true,
+                Message = "User deleted successfully"
+            });
         }
     }
 }

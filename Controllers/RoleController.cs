@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Server.DTOs.RoleDTOs;
@@ -6,6 +7,8 @@ using Server.Models;
 
 namespace Server.Controllers
 {
+
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class RoleController : ControllerBase
@@ -38,20 +41,29 @@ namespace Server.Controllers
             return BadRequest("Role creation faild");
         }
 
+        [AllowAnonymous]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoleDto>>> GetAllRoles()
+        public async Task<ActionResult<IEnumerable<RoleResponseDto>>> GetAllRoles()
         {
             var roles = _roleManager.Roles.ToList();
-            var roleDtos = roles.Select(role => new RoleDto
+            var roleDtos = new List<RoleResponseDto>();
+
+            foreach (var role in roles)
             {
-                RoleID = role.Id,
-                RoleName = role.Name
-            }).ToList();
+                var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
+                roleDtos.Add(new RoleResponseDto
+                {
+                    id = role.Id,
+                    Name = role.Name,
+                    TotalUser = usersInRole.Count
+                });
+            }
 
             return Ok(roleDtos);
         }
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<RoleDto>> GetRoleById(string id)
+        public async Task<ActionResult<RoleResponseDto>> GetRoleById(string id)
         {
             var role = await _roleManager.FindByIdAsync(id);
             if (role == null)
@@ -59,14 +71,17 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            var roleDto = new RoleDto
+            var usersInRole = await _userManager.GetUsersInRoleAsync(role.Name);
+            var roleDto = new RoleResponseDto
             {
-                RoleID = role.Id,
-                RoleName = role.Name
+                id = role.Id,
+                Name = role.Name,
+                TotalUser = usersInRole.Count
             };
 
             return Ok(roleDto);
         }
+
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateRole(string id, [FromBody] UpdateRoleDto updateRoleDto)
         {
@@ -107,6 +122,28 @@ namespace Server.Controllers
             }
 
             return BadRequest("Role deletion failed");
+        }
+        [HttpPost("assign")]
+        public async Task<IActionResult> AssignRole([FromBody] RoleAssignDto roleAssignDto)
+        {
+            var user = await _userManager.FindByIdAsync(roleAssignDto.UserId);
+            if (user is null)
+            {
+                return NotFound("User not found");
+            }
+            var role = await _roleManager.FindByIdAsync(roleAssignDto.RoleId);
+            if (role is null)
+            {
+                return NotFound("Role not found");
+            }
+            var result = await _userManager.AddToRoleAsync(user, role.Name!);
+            if (result.Succeeded)
+            {
+                return Ok(new { message = "Role assigned successfully" });
+
+            }
+            var error = result.Errors.FirstOrDefault();
+            return BadRequest(error!.Description);
         }
 
     }
