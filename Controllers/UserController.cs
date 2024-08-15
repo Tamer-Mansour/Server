@@ -194,6 +194,7 @@ namespace Server.Controllers
         public async Task<ActionResult<AuthResponseDto>> ResetPassword(ResetPasswordDto resetPasswordDto)
         {
             var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+            //resetPasswordDto.Token = WebUtility.UrlDecode(resetPasswordDto.Token);
             if (user == null)
             {
                 return BadRequest(new AuthResponseDto
@@ -347,6 +348,36 @@ namespace Server.Controllers
                     Message = response.Content.ToString()
                 });
             }
+
+        }
+        [HttpPost("change-password")]
+        
+        public async Task<ActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+        {
+            var user = await _userManager.FindByEmailAsync(changePasswordDto.Email);
+            if (user == null)
+            {
+                return BadRequest(new AuthResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "User does not exist with this email"
+                });
+            }
+            var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPasseord);
+            if (result.Succeeded)
+            {
+                return Ok(new AuthResponseDto
+                {
+                    IsSuccess = true,
+                    Message = "Password changed successfully"
+                });
+
+            }
+            return BadRequest(new AuthResponseDto
+            {
+                IsSuccess = false,
+                Message = result.Errors.FirstOrDefault()!.Description
+            });
 
         }
     }
