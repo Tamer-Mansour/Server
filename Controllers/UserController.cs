@@ -10,6 +10,7 @@ using Server.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Server.Controllers
@@ -99,12 +100,31 @@ namespace Server.Controllers
             }
 
             var token = GenerateToken(user);
+            var refreshToken = GenerateRefreshToken();
+            _ = int
+                .TryParse(_configuration.GetSection("JWTSetting")
+                .GetSection("RefreshTokenValidityIn")
+                .Value!, out int RefreshTokenValidityIn);
+
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiaryTime = DateTime.UtcNow.AddMinutes(RefreshTokenValidityIn);
+            await _userManager.UpdateAsync(user);
+
+
             return Ok(new AuthResponseDto
             {
                 Token = token,
                 IsSuccess = true,
                 Message = "Login Success"
             });
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[32];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
         }
 
         private string GenerateToken(User user)

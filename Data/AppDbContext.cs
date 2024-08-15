@@ -11,8 +11,8 @@ public class AppDbContext : IdentityDbContext<User>
     {
 
     }
-    //public DbSet<Blogs> Blogs { get; set; }
-    
+    //public DbSet<Ticket> Ticket { get; set; }
+
 
     protected void OnModelCreating(ModelBuilder modelBuilder)
     {
