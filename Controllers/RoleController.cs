@@ -76,7 +76,7 @@ namespace Server.Controllers
             {
                 id = role.Id,
                 Name = role.Name,
-                TotalUser = usersInRole.Count
+                TotalUser = usersInRole.Count 
             };
 
             return Ok(roleDto);

@@ -142,3 +142,4 @@ C:\Users\PC\Desktop\TamerBasic\TickeHub\Server\Server\bin\Debug\net8.0\Microsoft
 C:\Users\PC\Desktop\TamerBasic\TickeHub\Server\Server\bin\Debug\net8.0\Microsoft.Extensions.Identity.Stores.dll
 C:\Users\PC\Desktop\TamerBasic\TickeHub\Server\Server\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
 C:\Users\PC\Desktop\TamerBasic\TickeHub\Server\Server\obj\Debug\net8.0\Server.sourcelink.json
+C:\Users\PC\Desktop\TamerBasic\TickeHub\Server\Server\bin\Debug\net8.0\RestSharp.dll
