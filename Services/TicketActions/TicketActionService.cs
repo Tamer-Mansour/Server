@@ -1,44 +1,115 @@
-﻿using Server.Models;
-using Server.Repositories;
+﻿using Server.DTOs.TicketActionsDTOs;
+using Server.DTOs.TicketsDTOs;
+using Server.Models;
 using Server.Repositories.TicketActions;
-using Server.Services.TicketActions;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 
 namespace Server.Services.TicketActions
 {
     public class TicketActionService : ITicketActionService
     {
-        private readonly ITicketActionRepository _repository;
+        private readonly ITicketActionRepository _ticketActionRepository;
 
-        public TicketActionService(ITicketActionRepository repository)
+        public TicketActionService(ITicketActionRepository ticketActionRepository)
         {
-            _repository = repository;
+            _ticketActionRepository = ticketActionRepository;
         }
 
-        public async Task<TicketAction> GetByIdAsync(int id)
+        public async Task<TicketActionDTO> GetTicketActionByIdAsync(int id)
         {
-            return await _repository.GetByIdAsync(id);
+            var ticketAction = await _ticketActionRepository.GetByIdAsync(id);
+            if (ticketAction == null)
+            {
+                return null;
+            }
+
+            return new TicketActionDTO
+            {
+                ActionId = ticketAction.ActionId,
+                ActionName = ticketAction.ActionName
+            };
         }
 
-        public async Task<IEnumerable<TicketAction>> GetAllAsync()
+        public async Task<IEnumerable<TicketActionListDTO>> GetAllTicketActionsAsync()
         {
-            return await _repository.GetAllAsync();
+            var ticketActions = await _ticketActionRepository.GetAllAsync();
+            return ticketActions.Select(ticketAction => new TicketActionListDTO
+            {
+                ActionId = ticketAction.ActionId,
+                ActionName = ticketAction.ActionName
+            }).ToList();
         }
 
-        public async Task AddAsync(TicketAction ticketAction)
+        public async Task<TicketResponseDto> AddTicketActionAsync(TicketActionCreateDTO ticketActionCreateDTO)
         {
-            await _repository.AddAsync(ticketAction);
+            var ticketAction = new TicketAction
+            {
+                ActionName = ticketActionCreateDTO.ActionName
+            };
+
+            await _ticketActionRepository.AddAsync(ticketAction);
+            return new TicketResponseDto
+            {
+                IsSuccess = true,
+                Message = "Ticket action created successfully",
+                MessageCode = 200
+            };
         }
 
-        public async Task UpdateAsync(TicketAction ticketAction)
+        public async Task<TicketResponseDto> UpdateTicketActionAsync(int id, TicketActionUpdateDTO ticketActionUpdateDTO)
         {
-            await _repository.UpdateAsync(ticketAction);
+            var ticketAction = await _ticketActionRepository.GetByIdAsync(id);
+            if (ticketAction == null)
+            {
+                return new TicketResponseDto
+                {
+                    IsSuccess = false,
+                    Message = $"Ticket action with ID {id} could not be found.",
+                    MessageCode = 404
+                };
+            }
+
+            if (ticketAction.ActionName == ticketActionUpdateDTO.ActionName)
+            {
+                return new TicketResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "No changes detected. The action name is already the same.",
+                    MessageCode = 400
+                };
+            }
+
+            ticketAction.ActionName = ticketActionUpdateDTO.ActionName;
+            await _ticketActionRepository.UpdateAsync(ticketAction);
+
+            return new TicketResponseDto
+            {
+                IsSuccess = true,
+                Message = "Ticket action updated successfully",
+                MessageCode = 200
+            };
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<TicketResponseDto> DeleteTicketActionAsync(int id)
         {
-            await _repository.DeleteAsync(id);
+            var ticketAction = await _ticketActionRepository.GetByIdAsync(id);
+            if (ticketAction == null)
+            {
+                return new TicketResponseDto
+                {
+                    IsSuccess = false,
+                    Message = $"Ticket action with ID {id} could not be found.",
+                    MessageCode = 404
+                };
+            }
+
+            await _ticketActionRepository.DeleteAsync(id);
+            return new TicketResponseDto
+            {
+                IsSuccess = true,
+                Message = "Ticket action deleted successfully",
+                MessageCode = 200
+            };
         }
     }
 }
