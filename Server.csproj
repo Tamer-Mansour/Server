@@ -27,13 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="DTOs\TicketAttachmentsDTOs\" />
     <Folder Include="DTOs\TicketCategoriesDTOs\" />
-    <Folder Include="DTOs\TicketCategoryAssignmentsDTOs\" />
-    <Folder Include="DTOs\TicketCommentsDTOs\" />
-    <Folder Include="DTOs\TicketHistoriesDTOs\" />
-    <Folder Include="DTOs\TicketPrioritiesDTOs\" />
-    <Folder Include="DTOs\TicketStatusesDTOs\" />
   </ItemGroup>
 
 </Project>
