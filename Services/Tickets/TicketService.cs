@@ -1,7 +1,7 @@
 ﻿using Server.Models;
-using Server.Repositories.AppTickets;
+using Server.Repositories.Tickets;
 
-namespace Server.Services.AppTickets
+namespace Server.Services.Tickets
 {
     public class TicketService : ITicketService
     {

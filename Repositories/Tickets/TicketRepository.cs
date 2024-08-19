@@ -2,7 +2,7 @@
 using Server.Data;
 using Server.Models;
 
-namespace Server.Repositories.AppTickets
+namespace Server.Repositories.Tickets
 {
     public class TicketRepository : ITicketRepository
     {

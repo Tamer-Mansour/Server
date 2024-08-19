@@ -1,8 +1,8 @@
 ﻿using Server.Models;
 
-namespace Server.Repositories.AppTickets
+namespace Server.Services.Tickets
 {
-    public interface ITicketRepository
+    public interface ITicketService
     {
         Task<IEnumerable<Ticket>> GetAllAsync();
         Task<Ticket> GetByIdAsync(int id);
