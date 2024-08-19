@@ -8,7 +8,7 @@ namespace Server.Models
     {
         public string? FullName { get; set; }
         public string? RefreshToken { get; set; }
-
         public DateTime RefreshTokenExpiaryTime { get; set; }
+
     }
 }

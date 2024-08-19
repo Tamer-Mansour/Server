@@ -155,6 +155,247 @@ namespace Server.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Server.Models.Ticket", b =>
+                {
+                    b.Property<int>("TicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PriorityId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ResolvedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("TicketId");
+
+                    b.HasIndex("PriorityId");
+
+                    b.HasIndex("StatusId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Tickets");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketAction", b =>
+                {
+                    b.Property<int>("ActionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ActionId"));
+
+                    b.Property<string>("ActionName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ActionId");
+
+                    b.ToTable("TicketActions");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketAttachment", b =>
+                {
+                    b.Property<int>("AttachmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttachmentId"));
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AttachmentId");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketAttachments");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketCategory", b =>
+                {
+                    b.Property<int>("CategoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryId"));
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CategoryId");
+
+                    b.ToTable("TicketCategories");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketCategoryAssignment", b =>
+                {
+                    b.Property<int>("AssignmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AssignmentId"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AssignmentId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketCategoryAssignments");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketComment", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("TicketId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TicketComments");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketHistory", b =>
+                {
+                    b.Property<int>("HistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("HistoryId"));
+
+                    b.Property<DateTime>("ActionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ActionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TicketActionActionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("HistoryId");
+
+                    b.HasIndex("ActionId");
+
+                    b.HasIndex("TicketActionActionId");
+
+                    b.HasIndex("TicketId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TicketHistories");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketPriority", b =>
+                {
+                    b.Property<int>("PriorityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PriorityId"));
+
+                    b.Property<string>("PriorityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("PriorityId");
+
+                    b.ToTable("TicketPriorities");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketStatus", b =>
+                {
+                    b.Property<int>("StatusId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StatusId"));
+
+                    b.Property<string>("StatusName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StatusId");
+
+                    b.ToTable("TicketStatuses");
+                });
+
             modelBuilder.Entity("Server.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -278,6 +519,144 @@ namespace Server.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Server.Models.Ticket", b =>
+                {
+                    b.HasOne("Server.Models.TicketPriority", "TicketPriority")
+                        .WithMany("Tickets")
+                        .HasForeignKey("PriorityId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.TicketStatus", "TicketStatus")
+                        .WithMany("Tickets")
+                        .HasForeignKey("StatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("TicketPriority");
+
+                    b.Navigation("TicketStatus");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketAttachment", b =>
+                {
+                    b.HasOne("Server.Models.Ticket", "Ticket")
+                        .WithMany("TicketAttachments")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketCategoryAssignment", b =>
+                {
+                    b.HasOne("Server.Models.TicketCategory", "TicketCategory")
+                        .WithMany("TicketCategoryAssignments")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.Ticket", "Ticket")
+                        .WithMany("TicketCategoryAssignments")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("TicketCategory");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketComment", b =>
+                {
+                    b.HasOne("Server.Models.Ticket", "Ticket")
+                        .WithMany("TicketComments")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketHistory", b =>
+                {
+                    b.HasOne("Server.Models.TicketAction", "TicketAction")
+                        .WithMany()
+                        .HasForeignKey("ActionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.TicketAction", null)
+                        .WithMany("TicketHistories")
+                        .HasForeignKey("TicketActionActionId");
+
+                    b.HasOne("Server.Models.Ticket", "Ticket")
+                        .WithMany("TicketHistories")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("TicketAction");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Server.Models.Ticket", b =>
+                {
+                    b.Navigation("TicketAttachments");
+
+                    b.Navigation("TicketCategoryAssignments");
+
+                    b.Navigation("TicketComments");
+
+                    b.Navigation("TicketHistories");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketAction", b =>
+                {
+                    b.Navigation("TicketHistories");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketCategory", b =>
+                {
+                    b.Navigation("TicketCategoryAssignments");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketPriority", b =>
+                {
+                    b.Navigation("Tickets");
+                });
+
+            modelBuilder.Entity("Server.Models.TicketStatus", b =>
+                {
+                    b.Navigation("Tickets");
                 });
 #pragma warning restore 612, 618
         }
