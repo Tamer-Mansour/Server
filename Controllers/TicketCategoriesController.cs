@@ -4,6 +4,7 @@ using Server.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DTOs.TicketCategoriesDTOs;
+using Server.Services.TicketCategories;
 
 namespace Server.Controllers
 {
@@ -12,97 +13,51 @@ namespace Server.Controllers
     public class TicketCategoriesController : ControllerBase
     {
         private readonly AppDbContext _context;
-
-        public TicketCategoriesController(AppDbContext context)
+        private readonly ITicketCategoryService _ticketCategoryService;
+        public TicketCategoriesController(AppDbContext context, ITicketCategoryService ticketCategoryService)
         {
             _context = context;
+            _ticketCategoryService = ticketCategoryService;
         }
 
-        // GET: api/TicketCategories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TicketCategoryDTO>>> GetTicketCategories()
+        public async Task<IActionResult> GetTicketCategories(int pageNumber, int pageSize)
         {
-            return await _context.TicketCategories
-                .Select(tc => new TicketCategoryDTO
-                {
-                    CategoryId = tc.CategoryId,
-                    CategoryName = tc.CategoryName
-                })
-                .ToListAsync();
+            var result = await _ticketCategoryService.GetPaginatedAsync(pageNumber, pageSize);
+            return Ok(result);
         }
 
-        // GET: api/TicketCategories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TicketCategoryDTO>> GetTicketCategory(int id)
+        public async Task<IActionResult> GetTicketCategory(int id)
         {
-            var ticketCategory = await _context.TicketCategories.FindAsync(id);
+            var result = await _ticketCategoryService.GetByIdAsync(id);
 
-            if (ticketCategory == null)
-            {
-                return NotFound();
-            }
-
-            return new TicketCategoryDTO
-            {
-                CategoryId = ticketCategory.CategoryId,
-                CategoryName = ticketCategory.CategoryName
-            };
+            return Ok(result);
         }
 
-        // POST: api/TicketCategories
         [HttpPost]
         public async Task<ActionResult<TicketCategoryDTO>> PostTicketCategory(TicketCategoryCreateDTO createDTO)
         {
-            var ticketCategory = new TicketCategory
-            {
-                CategoryName = createDTO.CategoryName
-            };
 
-            _context.TicketCategories.Add(ticketCategory);
-            await _context.SaveChangesAsync();
-
-            var ticketCategoryDTO = new TicketCategoryDTO
-            {
-                CategoryId = ticketCategory.CategoryId,
-                CategoryName = ticketCategory.CategoryName
-            };
-            /**/
-
-            return CreatedAtAction(nameof(GetTicketCategory), new { id = ticketCategoryDTO.CategoryId }, ticketCategoryDTO);
+            var result = await _ticketCategoryService.AddAsync(createDTO);
+            return Ok(result);
         }
 
-        // PUT: api/TicketCategories/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTicketCategory(int id, TicketCategoryUpdateDTO updateDTO)
         {
-            var ticketCategory = await _context.TicketCategories.FindAsync(id);
-            if (ticketCategory == null)
-            {
-                return NotFound();
-            }
+            var result = await _ticketCategoryService.UpdateAsync(id, updateDTO);
 
-            ticketCategory.CategoryName = updateDTO.CategoryName;
-
-            _context.Entry(ticketCategory).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok(result);
         }
 
-        // DELETE: api/TicketCategories/5
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTicketCategory(int id)
         {
-            var ticketCategory = await _context.TicketCategories.FindAsync(id);
-            if (ticketCategory == null)
-            {
-                return NotFound();
-            }
+            var result = await _ticketCategoryService.DeleteAsync(id);
 
-            _context.TicketCategories.Remove(ticketCategory);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return Ok(result);
         }
     }
 }

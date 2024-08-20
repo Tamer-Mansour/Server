@@ -9,5 +9,7 @@ namespace Server.Repositories.TicketCategories
         Task AddAsync(TicketCategory ticketCategory);
         Task UpdateAsync(TicketCategory ticketCategory);
         Task DeleteAsync(int id);
+        Task<IEnumerable<TicketCategory>> GetPaginatedAsync(int pageNumber, int pageSize);
+        Task<int> GetCountAsync();
     }
 }

@@ -44,5 +44,18 @@ namespace Server.Repositories.TicketCategories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<TicketCategory>> GetPaginatedAsync(int pageNumber, int pageSize)
+        {
+            return await _context.TicketCategories
+                                 .Skip((pageNumber - 1) * pageSize)
+                                 .Take(pageSize)
+                                 .ToListAsync();
+        }
+
+        public async Task<int> GetCountAsync()
+        {
+            return await _context.TicketCategories.CountAsync();
+        }
     }
 }
