@@ -8,6 +8,6 @@ namespace Server.Repositories.TicketActions
         Task<IEnumerable<TicketAction>> GetAllAsync();
         Task AddAsync(TicketAction ticketAction);
         Task UpdateAsync(TicketAction ticketAction);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(TicketAction ticketAction);
     }
 }

@@ -7,5 +7,7 @@
         public string? Message { get; set; }
 
         public int? MessageCode { get; set; }
+
+        public Object? Data { get; set; }
     }
 }

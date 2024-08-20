@@ -1,58 +1,44 @@
-﻿using Server.DTOs.TicketActionsDTOs;
+﻿using AutoMapper;
+using Server.DTOs.TicketActionsDTOs;
 using Server.DTOs.TicketsDTOs;
 using Server.Models;
 using Server.Repositories.TicketActions;
-
 
 namespace Server.Services.TicketActions
 {
     public class TicketActionService : ITicketActionService
     {
         private readonly ITicketActionRepository _ticketActionRepository;
+        private readonly IMapper _mapper;
 
-        public TicketActionService(ITicketActionRepository ticketActionRepository)
+        public TicketActionService(ITicketActionRepository ticketActionRepository, IMapper mapper)
         {
             _ticketActionRepository = ticketActionRepository;
+            _mapper = mapper;
         }
 
         public async Task<TicketActionDTO> GetTicketActionByIdAsync(int id)
         {
             var ticketAction = await _ticketActionRepository.GetByIdAsync(id);
-            if (ticketAction == null)
-            {
-                return null;
-            }
-
-            return new TicketActionDTO
-            {
-                ActionId = ticketAction.ActionId,
-                ActionName = ticketAction.ActionName
-            };
+            return ticketAction != null ? _mapper.Map<TicketActionDTO>(ticketAction) : null;
         }
 
         public async Task<IEnumerable<TicketActionListDTO>> GetAllTicketActionsAsync()
         {
             var ticketActions = await _ticketActionRepository.GetAllAsync();
-            return ticketActions.Select(ticketAction => new TicketActionListDTO
-            {
-                ActionId = ticketAction.ActionId,
-                ActionName = ticketAction.ActionName
-            }).ToList();
+            return _mapper.Map<IEnumerable<TicketActionListDTO>>(ticketActions);
         }
 
         public async Task<TicketResponseDto> AddTicketActionAsync(TicketActionCreateDTO ticketActionCreateDTO)
         {
-            var ticketAction = new TicketAction
-            {
-                ActionName = ticketActionCreateDTO.ActionName
-            };
-
+            var ticketAction = _mapper.Map<TicketAction>(ticketActionCreateDTO);
             await _ticketActionRepository.AddAsync(ticketAction);
             return new TicketResponseDto
             {
                 IsSuccess = true,
                 Message = "Ticket action created successfully",
-                MessageCode = 200
+                MessageCode = 200,
+                //Data = ticketAction
             };
         }
 
@@ -69,24 +55,16 @@ namespace Server.Services.TicketActions
                 };
             }
 
-            if (ticketAction.ActionName == ticketActionUpdateDTO.ActionName)
-            {
-                return new TicketResponseDto
-                {
-                    IsSuccess = false,
-                    Message = "No changes detected. The action name is already the same.",
-                    MessageCode = 400
-                };
-            }
-
-            ticketAction.ActionName = ticketActionUpdateDTO.ActionName;
+            _mapper.Map(ticketActionUpdateDTO, ticketAction);
             await _ticketActionRepository.UpdateAsync(ticketAction);
 
             return new TicketResponseDto
             {
                 IsSuccess = true,
                 Message = "Ticket action updated successfully",
-                MessageCode = 200
+                MessageCode = 200,
+                //Data = ticketAction
+
             };
         }
 
@@ -103,7 +81,7 @@ namespace Server.Services.TicketActions
                 };
             }
 
-            await _ticketActionRepository.DeleteAsync(id);
+            await _ticketActionRepository.DeleteAsync(ticketAction);
             return new TicketResponseDto
             {
                 IsSuccess = true,

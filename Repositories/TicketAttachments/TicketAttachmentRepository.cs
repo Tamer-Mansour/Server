@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Server.Repositories.TicketAttachments
 {
@@ -35,14 +37,23 @@ namespace Server.Repositories.TicketAttachments
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(TicketAttachment ticketAttachment)
         {
-            var ticketAttachment = await GetByIdAsync(id);
-            if (ticketAttachment != null)
-            {
-                _context.TicketAttachments.Remove(ticketAttachment);
-                await _context.SaveChangesAsync();
-            }
+            _context.TicketAttachments.Remove(ticketAttachment);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<TicketAttachment>> GetPaginatedAsync(int pageNumber, int pageSize)
+        {
+            return await _context.TicketAttachments
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetCountAsync()
+        {
+            return await _context.TicketAttachments.CountAsync();
         }
     }
 }

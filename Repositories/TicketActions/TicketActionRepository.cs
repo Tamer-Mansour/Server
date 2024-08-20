@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Models;
-using Server.Repositories.TicketActions;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -38,14 +37,10 @@ namespace Server.Repositories.TicketActions
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(TicketAction ticketAction)
         {
-            var ticketAction = await GetByIdAsync(id);
-            if (ticketAction != null)
-            {
-                _context.TicketActions.Remove(ticketAction);
-                await _context.SaveChangesAsync();
-            }
+            _context.TicketActions.Remove(ticketAction);
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -2,8 +2,8 @@
 using Server.Models;
 using Server.DTOs;
 using Microsoft.EntityFrameworkCore;
-using Server.DTOs.TicketCategory;
 using Server.Data;
+using Server.DTOs.TicketCategoriesDTOs;
 
 namespace Server.Controllers
 {
@@ -20,10 +20,10 @@ namespace Server.Controllers
 
         // GET: api/TicketCategories
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TicketCategoryDto>>> GetTicketCategories()
+        public async Task<ActionResult<IEnumerable<TicketCategoryDTO>>> GetTicketCategories()
         {
             return await _context.TicketCategories
-                .Select(tc => new TicketCategoryDto
+                .Select(tc => new TicketCategoryDTO
                 {
                     CategoryId = tc.CategoryId,
                     CategoryName = tc.CategoryName
@@ -33,7 +33,7 @@ namespace Server.Controllers
 
         // GET: api/TicketCategories/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TicketCategoryDto>> GetTicketCategory(int id)
+        public async Task<ActionResult<TicketCategoryDTO>> GetTicketCategory(int id)
         {
             var ticketCategory = await _context.TicketCategories.FindAsync(id);
 
@@ -42,7 +42,7 @@ namespace Server.Controllers
                 return NotFound();
             }
 
-            return new TicketCategoryDto
+            return new TicketCategoryDTO
             {
                 CategoryId = ticketCategory.CategoryId,
                 CategoryName = ticketCategory.CategoryName
@@ -51,7 +51,7 @@ namespace Server.Controllers
 
         // POST: api/TicketCategories
         [HttpPost]
-        public async Task<ActionResult<TicketCategoryDto>> PostTicketCategory(CreateTicketCategoryDto createDTO)
+        public async Task<ActionResult<TicketCategoryDTO>> PostTicketCategory(TicketCategoryCreateDTO createDTO)
         {
             var ticketCategory = new TicketCategory
             {
@@ -61,7 +61,7 @@ namespace Server.Controllers
             _context.TicketCategories.Add(ticketCategory);
             await _context.SaveChangesAsync();
 
-            var ticketCategoryDTO = new TicketCategoryDto
+            var ticketCategoryDTO = new TicketCategoryDTO
             {
                 CategoryId = ticketCategory.CategoryId,
                 CategoryName = ticketCategory.CategoryName
@@ -73,7 +73,7 @@ namespace Server.Controllers
 
         // PUT: api/TicketCategories/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTicketCategory(int id, UpdateTicketCategoryDto updateDTO)
+        public async Task<IActionResult> PutTicketCategory(int id, TicketCategoryUpdateDTO updateDTO)
         {
             var ticketCategory = await _context.TicketCategories.FindAsync(id);
             if (ticketCategory == null)

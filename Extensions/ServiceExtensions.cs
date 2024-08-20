@@ -26,6 +26,9 @@ using Server.Services.Tickets;
 using Server.Services.TicketStatuses;
 using System;
 using System.Text;
+using AutoMapper;
+using System.Reflection;
+using Server.MappingProfiles;
 
 namespace Server.Extensions
 {
@@ -37,10 +40,12 @@ namespace Server.Extensions
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("TickeHub")));
 
+            // Configure Identity
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 
+            // Configure JWT Authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -64,9 +69,9 @@ namespace Server.Extensions
                 };
             });
 
+            // Configure Swagger
             services.AddSwaggerGen(c =>
             {
-                // Define the security scheme
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization Example: Bearer [token]",
@@ -76,24 +81,23 @@ namespace Server.Extensions
                     Scheme = "Bearer"
                 });
 
-                // Define the security requirement
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
-            {
                 {
-                    new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    new List<string>()
-                }
-            });
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
-            // Register repositories
+            // Register Repositories
             services.AddScoped<ITicketRepository, TicketRepository>();
             services.AddScoped<ITicketActionRepository, TicketActionRepository>();
             services.AddScoped<ITicketAttachmentRepository, TicketAttachmentRepository>();
@@ -104,7 +108,7 @@ namespace Server.Extensions
             services.AddScoped<ITicketPriorityRepository, TicketPriorityRepository>();
             services.AddScoped<ITicketStatusRepository, TicketStatusRepository>();
 
-            // Register services
+            // Register Services
             services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<ITicketActionService, TicketActionService>();
             services.AddScoped<ITicketAttachmentService, TicketAttachmentService>();
@@ -115,6 +119,10 @@ namespace Server.Extensions
             services.AddScoped<ITicketPriorityService, TicketPriorityService>();
             services.AddScoped<ITicketStatusService, TicketStatusService>();
 
+            // Register AutoMapper with all profiles in the current assembly
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+            // Register Controllers
             services.AddControllers();
         }
     }

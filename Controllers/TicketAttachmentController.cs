@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.DTOs.TicketAttachmentsDTOs;
-using Server.DTOs.TicketsDTOs;
-using Server.Models;
 using Server.Services.TicketAttachments;
-using Server.Utilities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Server.Controllers
 {
@@ -21,87 +20,43 @@ namespace Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var ticketAttachment = await _ticketAttachmentService.GetByIdAsync(id);
-            if (ticketAttachment == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket attachment", id, "retrieved", 404));
-            }
-
-            var ticketAttachmentDto = new TicketAttachmentDTO
-            {
-                AttachmentId = ticketAttachment.AttachmentId,
-                TicketId = ticketAttachment.TicketId,
-                FilePath = ticketAttachment.FilePath,
-                FileName = ticketAttachment.FileName,
-                UploadedAt = ticketAttachment.UploadedAt
-            };
-
-            return Ok(ticketAttachmentDto);
+            var result = await _ticketAttachmentService.GetTicketAttachmentByIdAsync(id);
+            return result != null ? Ok(result) : NotFound();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var ticketAttachments = await _ticketAttachmentService.GetAllAsync();
-            var ticketAttachmentDtos = ticketAttachments.Select(ticketAttachment => new TicketAttachmentDTO
-            {
-                AttachmentId = ticketAttachment.AttachmentId,
-                TicketId = ticketAttachment.TicketId,
-                FilePath = ticketAttachment.FilePath,
-                FileName = ticketAttachment.FileName,
-                UploadedAt = ticketAttachment.UploadedAt
-            }).ToList();
-
-            return Ok(ticketAttachmentDtos);
+            var result = await _ticketAttachmentService.GetAllTicketAttachmentAsync();
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddAsync(TicketAttachmentCreateDTO ticketAttachmentCreateDto)
         {
-            var ticketAttachment = new TicketAttachment
-            {
-                TicketId = ticketAttachmentCreateDto.TicketId,
-                FilePath = ticketAttachmentCreateDto.FilePath,
-                FileName = ticketAttachmentCreateDto.FileName,
-                UploadedAt = ticketAttachmentCreateDto.UploadedAt
-            };
-
-            await _ticketAttachmentService.AddAsync(ticketAttachment);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket attachment created successfully", 201));
+            var result = await _ticketAttachmentService.AddTicketAttachmentAsync(ticketAttachmentCreateDto);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, TicketAttachmentDTO ticketAttachmentDto)
+        public async Task<IActionResult> UpdateAsync(int id, TicketAttachmentUpdateDTO ticketAttachmentUpdateDto)
         {
-            var ticketAttachment = await _ticketAttachmentService.GetByIdAsync(id);
-            if (ticketAttachment == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket attachment", id, "updated", 404));
-            }
-
-            ticketAttachment.TicketId = ticketAttachmentDto.TicketId;
-            ticketAttachment.FilePath = ticketAttachmentDto.FilePath;
-            ticketAttachment.FileName = ticketAttachmentDto.FileName;
-            ticketAttachment.UploadedAt = ticketAttachmentDto.UploadedAt;
-
-            await _ticketAttachmentService.UpdateAsync(ticketAttachment);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket attachment updated successfully", 200));
+            var result = await _ticketAttachmentService.UpdateTicketAttachmentAsync(id, ticketAttachmentUpdateDto);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var ticketAttachment = await _ticketAttachmentService.GetByIdAsync(id);
-            if (ticketAttachment == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket attachment", id, "deleted", 404));
-            }
+            var result = await _ticketAttachmentService.DeleteTicketAttachmentAsync(id);
+            return Ok(result);
+        }
 
-            await _ticketAttachmentService.DeleteAsync(id);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket attachment deleted successfully", 200));
+        [HttpGet("paginated")]
+        public async Task<IActionResult> GetPaginatedTicketAttachments(int pageNumber, int pageSize)
+        {
+            var result = await _ticketAttachmentService.GetPaginatedTicketAttachmentsAsync(pageNumber, pageSize);
+            return Ok(result);
         }
     }
 }

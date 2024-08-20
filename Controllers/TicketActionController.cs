@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.DTOs.TicketActionsDTOs;
-using Server.DTOs.TicketsDTOs;
 using Server.Services.TicketActions;
-
 
 namespace Server.Controllers
 {
@@ -18,29 +16,38 @@ namespace Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TicketActionDTO>> GetByIdAsync(int id) =>
-            OkOrNotFound(await _ticketActionService.GetTicketActionByIdAsync(id));
+        public async Task<IActionResult> GetByIdAsync(int id)
+        {
+            var result = await _ticketActionService.GetTicketActionByIdAsync(id);
+            return result != null ? Ok(result) : NotFound();
+        }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TicketActionListDTO>>> GetAllAsync() =>
-            Ok(await _ticketActionService.GetAllTicketActionsAsync());
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var result = await _ticketActionService.GetAllTicketActionsAsync();
+            return Ok(result);
+        }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync(TicketActionCreateDTO ticketActionCreateDTO) =>
-            OkOrBadRequest(await _ticketActionService.AddTicketActionAsync(ticketActionCreateDTO));
+        public async Task<IActionResult> AddAsync(TicketActionCreateDTO ticketActionCreateDTO)
+        {
+            var result = await _ticketActionService.AddTicketActionAsync(ticketActionCreateDTO);
+            return Ok(result);
+        }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, TicketActionUpdateDTO ticketActionUpdateDTO) =>
-            OkOrBadRequest(await _ticketActionService.UpdateTicketActionAsync(id, ticketActionUpdateDTO));
+        public async Task<IActionResult> UpdateAsync(int id, TicketActionUpdateDTO ticketActionUpdateDTO)
+        {
+            var result = await _ticketActionService.UpdateTicketActionAsync(id, ticketActionUpdateDTO);
+            return Ok(result);
+        }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteAsync(int id) =>
-            OkOrNotFound(await _ticketActionService.DeleteTicketActionAsync(id));
-
-        private ActionResult OkOrNotFound<T>(T result) where T : class =>
-            result != null ? Ok(result) : NotFound();
-
-        private IActionResult OkOrBadRequest(TicketResponseDto response) =>
-            response.IsSuccess ? Ok(response) : BadRequest(response);
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var result = await _ticketActionService.DeleteTicketActionAsync(id);
+            return Ok(result);
+        }
     }
 }
