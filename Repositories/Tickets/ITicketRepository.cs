@@ -14,6 +14,9 @@ namespace Server.Repositories.Tickets
         Task<IEnumerable<Ticket>> GetByPriorityAsync(int priorityId);
         Task<IEnumerable<Ticket>> GetByStatusAsync(int statusId);
 
+        Task<IEnumerable<Ticket>> GetTicketsByUserAsync(string userId);
+        Task<IEnumerable<Ticket>> GetTicketsAssignedToUserAsync(string userId);
+
         //Task<IEnumerable<Ticket>> GetClosedTicketsAsync();
     }
 }

@@ -62,6 +62,18 @@ namespace Server.Repositories.Tickets
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Ticket>> GetTicketsByUserAsync(string userId)
+        {
+            return await _context.Tickets
+                .Where(t => t.UserId == userId)
+                .ToListAsync();
+        }
 
+        public async Task<IEnumerable<Ticket>> GetTicketsAssignedToUserAsync(string userId)
+        {
+            return await _context.Tickets
+                .Where(t => t.AssignedByUserId == userId)
+                .ToListAsync();
+        }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Server.DTOs.Pagination;
 using Server.DTOs.TicketsDTOs;
-using Server.Models;
 using Server.Services.Tickets;
-using Server.Utilities;
-using System.Drawing.Printing;
 
 namespace Server.Controllers
 {
@@ -22,6 +20,9 @@ namespace Server.Controllers
         public async Task<IActionResult> GetByIdAsync(int id)
         {
             var result = await _ticketService.GetByIdAsync(id);
+            if (result == null)
+                return NotFound();
+
             return Ok(result);
         }
 
@@ -35,34 +36,56 @@ namespace Server.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAsync(TicketCreateDTO ticketCreateDto)
         {
-            var result = await _ticketService.AddAsync(ticketCreateDto);
-            return Ok(result);
+            var result = await _ticketService.AddAsync(ticketCreateDto, User?.Identity?.Name);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, TicketUpdateDTO ticketUpdateDTO)
+        [HttpPut("Customer/{id}")]
+        public async Task<IActionResult> UpdateCustomerAsync(int id, TicketUpdateCustomerDTO ticketUpdateCustomerDTO)
         {
-            var result = await _ticketService.UpdateAsync(id, ticketUpdateDTO);
-            return Ok(result);
+            var result = await _ticketService.UpdateCustomerAsync(id, ticketUpdateCustomerDTO);
+            return result.IsSuccess ? Ok(result) : NotFound(result);
+        }
+
+        [HttpPut("Support/{id}")]
+        public async Task<IActionResult> UpdateSupportAsync(int id, TicketUpdateSupportDTO ticketUpdateSupportDTO)
+        {
+            var result = await _ticketService.UpdateSupportAsync(id, ticketUpdateSupportDTO);
+            return result.IsSuccess ? Ok(result) : NotFound(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var result = await _ticketService.DeleteAsync(id);
-            return Ok(result);
+            return result.IsSuccess ? Ok(result) : NotFound(result);
         }
+
         [HttpGet("priority/{priorityId}")]
         public async Task<IActionResult> GetTicketsByPriorityAsync(int priorityId)
         {
             var result = await _ticketService.GetTicketsByPriorityAsync(priorityId);
+            return result.IsSuccess ? Ok(result) : NotFound(result);
+        }
+
+        [HttpGet("status/{statusId}")]
+        public async Task<IActionResult> GetTicketsByStatusAsync(int statusId)
+        {
+            var result = await _ticketService.GetTicketsByStatusAsync(statusId);
+            return result.IsSuccess ? Ok(result) : NotFound(result);
+        }
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetTicketsByUserAsync(string userId)
+        {
+            var result = await _ticketService.GetTicketsByUserAsync(userId);
             return Ok(result);
         }
 
-        [HttpGet("status/{statuesId}")]
-        public async Task<IActionResult> GetTicketsByStatusAsync(int statuesId)
+        [HttpGet("assigned-to/{userId}")]
+        public async Task<IActionResult> GetTicketsAssignedToUserAsync(string userId)
         {
-            var result = await _ticketService.GetTicketsByStatusAsync(statuesId);
+            var result = await _ticketService.GetTicketsAssignedToUserAsync(userId);
             return Ok(result);
         }
     }

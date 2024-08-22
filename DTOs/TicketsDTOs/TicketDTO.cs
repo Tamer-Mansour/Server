@@ -12,5 +12,6 @@
         public DateTime? ResolvedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
         public string UserId { get; set; } = string.Empty;
+        public string? AssignedByUserId { get; set; }
     }
 }

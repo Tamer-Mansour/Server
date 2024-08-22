@@ -1,8 +1,5 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
-using NuGet.Protocol.Core.Types;
 using Server.DTOs.Pagination;
-using Server.DTOs.TicketCommentsDTOs;
 using Server.DTOs.TicketsDTOs;
 using Server.Models;
 using Server.Repositories.Tickets;
@@ -22,10 +19,10 @@ namespace Server.Services.Tickets
 
         public async Task<PaginatedResult<TicketDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
-            var ticket = await _repository.GetAllAsync(pageNumber, pageSize);
+            var tickets = await _repository.GetAllAsync(pageNumber, pageSize);
             var totalItems = await _repository.GetCountAsync();
 
-            var ticketDtos = _mapper.Map<IEnumerable<TicketDTO>>(ticket);
+            var ticketDtos = _mapper.Map<IEnumerable<TicketDTO>>(tickets);
             return new PaginatedResult<TicketDTO>
             {
                 Items = ticketDtos,
@@ -41,22 +38,22 @@ namespace Server.Services.Tickets
             return ticket != null ? _mapper.Map<TicketDTO>(ticket) : null;
         }
 
-        public async Task<TicketResponseDto> AddAsync(TicketCreateDTO ticketCreateDTO)
+        public async Task<TicketResponseDto> AddAsync(TicketCreateDTO ticketCreateDTO, string? assignedByUserId = null)
         {
             var ticket = _mapper.Map<Ticket>(ticketCreateDTO);
+            ticket.AssignedByUserId = assignedByUserId; // Set the user who assigned the ticket
             await _repository.AddAsync(ticket);
 
             return new TicketResponseDto
             {
                 IsSuccess = true,
-                Message = "Ticket comment created successfully",
+                Message = "Ticket created successfully",
                 MessageCode = 200,
-                Data = ticket
-
+                Data = _mapper.Map<TicketDTO>(ticket)
             };
         }
 
-        public async Task<TicketResponseDto> UpdateAsync(int id , TicketUpdateDTO ticketUpdateDTO)
+        public async Task<TicketResponseDto> UpdateCustomerAsync(int id, TicketUpdateCustomerDTO ticketUpdateCustomerDTO)
         {
             var ticket = await _repository.GetByIdAsync(id);
             if (ticket == null)
@@ -65,17 +62,44 @@ namespace Server.Services.Tickets
                 {
                     IsSuccess = false,
                     Message = $"Ticket with ID {id} could not be found.",
-                    MessageCode = 404,
+                    MessageCode = 404
                 };
             }
-            _mapper.Map(ticketUpdateDTO, ticket);
+
+            _mapper.Map(ticketUpdateCustomerDTO, ticket);
             await _repository.UpdateAsync(ticket);
+
             return new TicketResponseDto
             {
                 IsSuccess = true,
                 Message = "Ticket updated successfully",
                 MessageCode = 200,
-                Data = ticket
+                Data = _mapper.Map<TicketDTO>(ticket)
+            };
+        }
+
+        public async Task<TicketResponseDto> UpdateSupportAsync(int id, TicketUpdateSupportDTO ticketUpdateSupportDTO)
+        {
+            var ticket = await _repository.GetByIdAsync(id);
+            if (ticket == null)
+            {
+                return new TicketResponseDto
+                {
+                    IsSuccess = false,
+                    Message = $"Ticket with ID {id} could not be found.",
+                    MessageCode = 404
+                };
+            }
+
+            _mapper.Map(ticketUpdateSupportDTO, ticket);
+            await _repository.UpdateAsync(ticket);
+
+            return new TicketResponseDto
+            {
+                IsSuccess = true,
+                Message = "Ticket updated successfully",
+                MessageCode = 200,
+                Data = _mapper.Map<TicketDTO>(ticket)
             };
         }
 
@@ -88,7 +112,7 @@ namespace Server.Services.Tickets
                 {
                     IsSuccess = false,
                     Message = $"Ticket with ID {id} could not be found.",
-                    MessageCode = 404,
+                    MessageCode = 404
                 };
             }
 
@@ -97,7 +121,7 @@ namespace Server.Services.Tickets
             {
                 IsSuccess = true,
                 Message = "Ticket deleted successfully",
-                MessageCode = 200,
+                MessageCode = 200
             };
         }
 
@@ -145,6 +169,18 @@ namespace Server.Services.Tickets
                 MessageCode = 200,
                 Data = ticketDtos
             };
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetTicketsByUserAsync(string userId)
+        {
+            var tickets = await _repository.GetTicketsByUserAsync(userId);
+            return _mapper.Map<IEnumerable<TicketDTO>>(tickets);
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetTicketsAssignedToUserAsync(string userId)
+        {
+            var tickets = await _repository.GetTicketsAssignedToUserAsync(userId);
+            return _mapper.Map<IEnumerable<TicketDTO>>(tickets);
         }
     }
 }

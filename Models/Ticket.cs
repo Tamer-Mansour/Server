@@ -28,6 +28,10 @@ namespace Server.Models
         [ForeignKey("UserId")]
         public User User { get; set; }
 
+        public string? AssignedByUserId { get; set; }
+        [ForeignKey("AssignedByUserId")]
+        public User? AssignedByUser { get; set; }
+
         public ICollection<TicketAttachment> TicketAttachments { get; set; } = new List<TicketAttachment>();
         public ICollection<TicketCategoryAssignment> TicketCategoryAssignments { get; set; } = new List<TicketCategoryAssignment>();
         public ICollection<TicketComment> TicketComments { get; set; } = new List<TicketComment>();
