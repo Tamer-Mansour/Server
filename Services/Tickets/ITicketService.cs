@@ -9,8 +9,9 @@ namespace Server.Services.Tickets
         Task<PaginatedResult<TicketDTO>> GetAllAsync(int pageNumber, int pageSize);
         Task<TicketDTO> GetByIdAsync(int id);
         Task<TicketResponseDto> AddAsync(TicketCreateDTO ticketCreateDTO, string? assignedByUserId = null);
-        Task<TicketResponseDto> UpdateCustomerAsync(int id, TicketUpdateCustomerDTO ticketUpdateCustomerDTO);
-        Task<TicketResponseDto> UpdateSupportAsync(int id, TicketUpdateSupportDTO ticketUpdateSupportDTO);
+
+        Task<TicketResponseDto> UpdateCustomerAsync(int ticketId, string userId, TicketUpdateCustomerDTO ticketUpdateCustomerDTO);
+        Task<TicketResponseDto> UpdateSupportAsync(int ticketId, string userId, TicketUpdateSupportDTO ticketUpdateSupportDTO);
 
         Task<TicketResponseDto> DeleteAsync(int id);
 

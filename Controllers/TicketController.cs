@@ -40,17 +40,17 @@ namespace Server.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
-        [HttpPut("Customer/{id}")]
-        public async Task<IActionResult> UpdateCustomerAsync(int id, TicketUpdateCustomerDTO ticketUpdateCustomerDTO)
+        [HttpPut("{ticketId}/Customer/{userId}")]
+        public async Task<IActionResult> UpdateCustomerAsync(int ticketId, string userId, TicketUpdateCustomerDTO ticketUpdateCustomerDTO)
         {
-            var result = await _ticketService.UpdateCustomerAsync(id, ticketUpdateCustomerDTO);
+            var result = await _ticketService.UpdateCustomerAsync(ticketId, userId, ticketUpdateCustomerDTO);
             return result.IsSuccess ? Ok(result) : NotFound(result);
         }
 
-        [HttpPut("Support/{id}")]
-        public async Task<IActionResult> UpdateSupportAsync(int id, TicketUpdateSupportDTO ticketUpdateSupportDTO)
+        [HttpPut("{ticketId}/Support/{userId}")]
+        public async Task<IActionResult> UpdateSupportAsync(int ticketId, string userId, TicketUpdateSupportDTO ticketUpdateSupportDTO)
         {
-            var result = await _ticketService.UpdateSupportAsync(id, ticketUpdateSupportDTO);
+            var result = await _ticketService.UpdateSupportAsync(ticketId, userId, ticketUpdateSupportDTO);
             return result.IsSuccess ? Ok(result) : NotFound(result);
         }
 

@@ -75,5 +75,10 @@ namespace Server.Repositories.Tickets
                 .Where(t => t.AssignedByUserId == userId)
                 .ToListAsync();
         }
+
+        public async Task<User> GetUserByIdAsync(string userId)
+        {
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        }
     }
 }

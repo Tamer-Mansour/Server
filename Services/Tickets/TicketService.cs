@@ -53,17 +53,32 @@ namespace Server.Services.Tickets
             };
         }
 
-        public async Task<TicketResponseDto> UpdateCustomerAsync(int id, TicketUpdateCustomerDTO ticketUpdateCustomerDTO)
+        public async Task<TicketResponseDto> UpdateCustomerAsync(int ticketId, string userId, TicketUpdateCustomerDTO ticketUpdateCustomerDTO)
         {
-            var ticket = await _repository.GetByIdAsync(id);
+            var ticket = await _repository.GetByIdAsync(ticketId);
             if (ticket == null)
             {
                 return new TicketResponseDto
                 {
                     IsSuccess = false,
-                    Message = $"Ticket with ID {id} could not be found.",
+                    Message = $"Ticket with ID {ticketId} could not be found.",
                     MessageCode = 404
                 };
+            }
+
+            // Check if the ticket is assigned to someone else
+            if (!string.IsNullOrEmpty(ticket.AssignedByUserId))
+            {
+                var assignedUser = await _repository.GetUserByIdAsync(ticket.AssignedByUserId);
+                if (assignedUser != null)
+                {
+                    return new TicketResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = $"This ticket is assigned to {assignedUser.FullName}. You do not have permission to edit it.",
+                        MessageCode = 403
+                    };
+                }
             }
 
             _mapper.Map(ticketUpdateCustomerDTO, ticket);
@@ -78,19 +93,23 @@ namespace Server.Services.Tickets
             };
         }
 
-        public async Task<TicketResponseDto> UpdateSupportAsync(int id, TicketUpdateSupportDTO ticketUpdateSupportDTO)
+
+        public async Task<TicketResponseDto> UpdateSupportAsync(int ticketId, string userId, TicketUpdateSupportDTO ticketUpdateSupportDTO)
         {
-            var ticket = await _repository.GetByIdAsync(id);
+            var ticket = await _repository.GetByIdAsync(ticketId);
             if (ticket == null)
             {
                 return new TicketResponseDto
                 {
                     IsSuccess = false,
-                    Message = $"Ticket with ID {id} could not be found.",
+                    Message = $"Ticket with ID {ticketId} could not be found.",
                     MessageCode = 404
                 };
             }
 
+            // Validate the userId (this is where you could add additional validation logic if needed)
+
+            // Proceed with the update if the validation passes
             _mapper.Map(ticketUpdateSupportDTO, ticket);
             await _repository.UpdateAsync(ticket);
 

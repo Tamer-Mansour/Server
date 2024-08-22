@@ -16,6 +16,7 @@ namespace Server.Repositories.Tickets
 
         Task<IEnumerable<Ticket>> GetTicketsByUserAsync(string userId);
         Task<IEnumerable<Ticket>> GetTicketsAssignedToUserAsync(string userId);
+        Task<User> GetUserByIdAsync(string userId);
 
         //Task<IEnumerable<Ticket>> GetClosedTicketsAsync();
     }
