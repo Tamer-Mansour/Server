@@ -8,6 +8,6 @@ namespace Server.Repositories.TicketPriorities
         Task<IEnumerable<TicketPriority>> GetAllAsync();
         Task AddAsync(TicketPriority ticketPriority);
         Task UpdateAsync(TicketPriority ticketPriority);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(TicketPriority ticketPriority);
     }
 }

@@ -39,14 +39,10 @@ namespace Server.Repositories.TicketPriorities
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(TicketPriority ticketPriority)
         {
-            var ticketPriority = await GetByIdAsync(id);
-            if (ticketPriority != null)
-            {
-                _context.TicketPriorities.Remove(ticketPriority);
-                await _context.SaveChangesAsync();
-            }
+            _context.TicketPriorities.Remove(ticketPriority);
+            await _context.SaveChangesAsync();
         }
     }
 }

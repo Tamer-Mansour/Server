@@ -3,6 +3,7 @@ using Server.DTOs.TicketsDTOs;
 using Server.Models;
 using Server.Services.Tickets;
 using Server.Utilities;
+using System.Drawing.Printing;
 
 namespace Server.Controllers
 {
@@ -20,107 +21,49 @@ namespace Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var ticket = await _ticketService.GetByIdAsync(id);
-            if (ticket == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket", id, "retrieved", 404));
-            }
-
-            var ticketDto = new TicketDTO
-            {
-                TicketId = ticket.TicketId,
-                Title = ticket.Title,
-                Description = ticket.Description,
-                StatusId = ticket.StatusId,
-                PriorityId = ticket.PriorityId,
-                CreatedAt = ticket.CreatedAt,
-                UpdatedAt = ticket.UpdatedAt,
-                ResolvedAt = ticket.ResolvedAt,
-                ClosedAt = ticket.ClosedAt,
-                UserId = ticket.UserId
-            };
-
-            return Ok(ticketDto);
+            var result = await _ticketService.GetByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(int pageNumber, int pageSize)
         {
-            var tickets = await _ticketService.GetAllAsync();
-            var ticketDtos = tickets.Select(ticket => new TicketDTO
-            {
-                TicketId = ticket.TicketId,
-                Title = ticket.Title,
-                Description = ticket.Description,
-                StatusId = ticket.StatusId,
-                PriorityId = ticket.PriorityId,
-                CreatedAt = ticket.CreatedAt,
-                UpdatedAt = ticket.UpdatedAt,
-                ResolvedAt = ticket.ResolvedAt,
-                ClosedAt = ticket.ClosedAt,
-                UserId = ticket.UserId
-            }).ToList();
-
-            return Ok(ticketDtos);
+            var result = await _ticketService.GetAllAsync(pageNumber, pageSize);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddAsync(TicketCreateDTO ticketCreateDto)
         {
-            var ticket = new Ticket
-            {
-                Title = ticketCreateDto.Title,
-                Description = ticketCreateDto.Description,
-                StatusId = ticketCreateDto.StatusId,
-                PriorityId = ticketCreateDto.PriorityId,
-                CreatedAt = ticketCreateDto.CreatedAt,
-                UpdatedAt = ticketCreateDto.UpdatedAt,
-                ResolvedAt = ticketCreateDto.ResolvedAt,
-                ClosedAt = ticketCreateDto.ClosedAt,
-                UserId = ticketCreateDto.UserId
-            };
-
-            await _ticketService.AddAsync(ticket);
-
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = ticket.TicketId }, ResponseHelper.CreateResponse(true, "Ticket created successfully", 201));
+            var result = await _ticketService.AddAsync(ticketCreateDto);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, TicketDTO ticketDto)
+        public async Task<IActionResult> UpdateAsync(int id, TicketUpdateDTO ticketUpdateDTO)
         {
-            var existingTicket = await _ticketService.GetByIdAsync(id);
-            if (existingTicket == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket", id, "updated", 404));
-            }
-
-            existingTicket.Title = ticketDto.Title;
-            existingTicket.Description = ticketDto.Description;
-            existingTicket.StatusId = ticketDto.StatusId;
-            existingTicket.PriorityId = ticketDto.PriorityId;
-            existingTicket.CreatedAt = ticketDto.CreatedAt;
-            existingTicket.UpdatedAt = ticketDto.UpdatedAt;
-            existingTicket.ResolvedAt = ticketDto.ResolvedAt;
-            existingTicket.ClosedAt = ticketDto.ClosedAt;
-            existingTicket.UserId = ticketDto.UserId;
-
-            await _ticketService.UpdateAsync(existingTicket);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket updated successfully", 200));
+            var result = await _ticketService.UpdateAsync(id, ticketUpdateDTO);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var existingTicket = await _ticketService.GetByIdAsync(id);
-            if (existingTicket == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket", id, "deleted", 404));
-            }
+            var result = await _ticketService.DeleteAsync(id);
+            return Ok(result);
+        }
+        [HttpGet("priority/{priorityId}")]
+        public async Task<IActionResult> GetTicketsByPriorityAsync(int priorityId)
+        {
+            var result = await _ticketService.GetTicketsByPriorityAsync(priorityId);
+            return Ok(result);
+        }
 
-            await _ticketService.DeleteAsync(id);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket deleted successfully", 200));
+        [HttpGet("status/{statuesId}")]
+        public async Task<IActionResult> GetTicketsByStatusAsync(int statuesId)
+        {
+            var result = await _ticketService.GetTicketsByStatusAsync(statuesId);
+            return Ok(result);
         }
     }
 }

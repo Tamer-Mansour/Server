@@ -1,13 +1,15 @@
-﻿using Server.Models;
+﻿using Server.DTOs.TicketPrioritiesDTOs;
+using Server.DTOs.TicketsDTOs;
+using Server.Models;
 
 namespace Server.Services.TicketPriorities
 {
     public interface ITicketPriorityService
     {
-        Task<TicketPriority> GetByIdAsync(int id);
-        Task<IEnumerable<TicketPriority>> GetAllAsync();
-        Task AddAsync(TicketPriority ticketPriority);
-        Task UpdateAsync(TicketPriority ticketPriority);
-        Task DeleteAsync(int id);
+        Task<TicketPriorityDTO> GetByIdAsync(int id);
+        Task<IEnumerable<TicketPriorityDTO>> GetAllAsync();
+        Task<TicketResponseDto> AddAsync(TicketPriorityCreateDTO ticketPriorityCreateDTO);
+        Task<TicketResponseDto> UpdateAsync(int id, TicketPriorityUpdateDTO ticketPriorityUpdateDTO);
+        Task<TicketResponseDto> DeleteAsync(int id);
     }
 }

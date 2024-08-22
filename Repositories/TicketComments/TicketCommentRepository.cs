@@ -18,9 +18,12 @@ namespace Server.Repositories.TicketComments
             return await _context.TicketComments.FindAsync(id);
         }
 
-        public async Task<IEnumerable<TicketComment>> GetAllAsync()
+        public async Task<IEnumerable<TicketComment>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.TicketComments.ToListAsync();
+            return await _context.TicketComments
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
         public async Task AddAsync(TicketComment ticketComment)
@@ -35,14 +38,15 @@ namespace Server.Repositories.TicketComments
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(TicketComment ticketComment)
         {
-            var ticketComment = await GetByIdAsync(id);
-            if (ticketComment != null)
-            {
-                _context.TicketComments.Remove(ticketComment);
-                await _context.SaveChangesAsync();
-            }
+            _context.TicketComments.Remove(ticketComment);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<int> GetCountAsync()
+        {
+            return await _context.TicketComments.CountAsync();
         }
     }
 }

@@ -8,6 +8,6 @@ namespace Server.Repositories.TicketStatuses
         Task<IEnumerable<TicketStatus>> GetAllAsync();
         Task AddAsync(TicketStatus ticketStatus);
         Task UpdateAsync(TicketStatus ticketStatus);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(TicketStatus ticketStatus);
     }
 }

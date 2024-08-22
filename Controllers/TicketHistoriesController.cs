@@ -19,117 +19,38 @@ namespace Server.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<TicketResponseDto>> GetByIdAsync(int id)
+        public async Task<ActionResult> GetByIdAsync(int id)
         {
-            var ticketHistory = await _ticketHistoryService.GetByIdAsync(id);
-            if (ticketHistory == null)
-            {
-                return NotFound(CreateDynamicErrorResponse("Ticket history", id, "found", 404));
-            }
-
-            var ticketHistoryDto = new TicketHistoryDTO
-            {
-                HistoryId = ticketHistory.HistoryId,
-                TicketId = ticketHistory.TicketId,
-                UserId = ticketHistory.UserId,
-                ActionId = ticketHistory.ActionId,
-                ActionDate = ticketHistory.ActionDate,
-                Details = ticketHistory.Details
-            };
-
-            return Ok(ticketHistoryDto);
+            var result = await _ticketHistoryService.GetByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TicketHistoryDTO>>> GetAllAsync()
+        public async Task<ActionResult> GetAllAsync(int pageNumber, int pageSize)
         {
-            var ticketHistories = await _ticketHistoryService.GetAllAsync();
-            var ticketHistoryDtos = new List<TicketHistoryDTO>();
-
-            foreach (var ticketHistory in ticketHistories)
-            {
-                ticketHistoryDtos.Add(new TicketHistoryDTO
-                {
-                    HistoryId = ticketHistory.HistoryId,
-                    TicketId = ticketHistory.TicketId,
-                    UserId = ticketHistory.UserId,
-                    ActionId = ticketHistory.ActionId,
-                    ActionDate = ticketHistory.ActionDate,
-                    Details = ticketHistory.Details
-                });
-            }
-
-            return Ok(ticketHistoryDtos);
+            var result = await _ticketHistoryService.GetAllAsync(pageNumber, pageSize);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddAsync(TicketHistoryCreateDTO ticketHistoryCreateDTO)
         {
-            var ticketHistory = new TicketHistory
-            {
-                TicketId = ticketHistoryCreateDTO.TicketId,
-                UserId = ticketHistoryCreateDTO.UserId,
-                ActionId = ticketHistoryCreateDTO.ActionId,
-                ActionDate = ticketHistoryCreateDTO.ActionDate,
-                Details = ticketHistoryCreateDTO.Details
-            };
-
-            await _ticketHistoryService.AddAsync(ticketHistory);
-
-            return Ok(CreateResponse(true, "Ticket history created successfully", 200));
+            var result = await _ticketHistoryService.AddAsync(ticketHistoryCreateDTO);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, TicketHistoryDTO ticketHistoryDto)
+        public async Task<IActionResult> UpdateAsync(int id, TicketHistoryUpdateDTO ticketHistoryUpdateDTO)
         {
-            var ticketHistory = await _ticketHistoryService.GetByIdAsync(id);
-            if (ticketHistory == null)
-            {
-                return NotFound(CreateDynamicErrorResponse("Ticket history", id, "updated", 404));
-            }
-
-            ticketHistory.TicketId = ticketHistoryDto.TicketId;
-            ticketHistory.UserId = ticketHistoryDto.UserId;
-            ticketHistory.ActionId = ticketHistoryDto.ActionId;
-            ticketHistory.ActionDate = ticketHistoryDto.ActionDate;
-            ticketHistory.Details = ticketHistoryDto.Details;
-
-            await _ticketHistoryService.UpdateAsync(ticketHistory);
-
-            return Ok(CreateResponse(true, "Ticket history updated successfully", 200));
+            var result = await _ticketHistoryService.UpdateAsync(id, ticketHistoryUpdateDTO);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var ticketHistory = await _ticketHistoryService.GetByIdAsync(id);
-            if (ticketHistory == null)
-            {
-                return NotFound(CreateDynamicErrorResponse("Ticket history", id, "deleted", 404));
-            }
-
-            await _ticketHistoryService.DeleteAsync(id);
-            return Ok(CreateResponse(true, "Ticket history deleted successfully", 200));
-        }
-
-        private TicketResponseDto CreateResponse(bool isSuccess, string message, int messageCode)
-        {
-            return new TicketResponseDto
-            {
-                IsSuccess = isSuccess,
-                Message = message,
-                MessageCode = messageCode
-            };
-        }
-
-        private TicketResponseDto CreateDynamicErrorResponse(string entityName, int entityId, string action, int messageCode)
-        {
-            return new TicketResponseDto
-            {
-                IsSuccess = false,
-                Message = $"{entityName} with ID {entityId} could not be {action}.",
-                MessageCode = messageCode
-            };
+            var result = await _ticketHistoryService.DeleteAsync(id);
+            return Ok(result);
         }
     }
 }

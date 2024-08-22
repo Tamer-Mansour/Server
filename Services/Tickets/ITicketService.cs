@@ -1,13 +1,18 @@
-﻿using Server.Models;
+﻿using Server.DTOs.Pagination;
+using Server.DTOs.TicketsDTOs;
+using Server.Models;
 
 namespace Server.Services.Tickets
 {
     public interface ITicketService
     {
-        Task<IEnumerable<Ticket>> GetAllAsync();
-        Task<Ticket> GetByIdAsync(int id);
-        Task AddAsync(Ticket ticket);
-        Task UpdateAsync(Ticket ticket);
-        Task DeleteAsync(int id);
+        Task<PaginatedResult<TicketDTO>> GetAllAsync(int pageNumber, int pageSize);
+        Task<TicketDTO> GetByIdAsync(int id);
+        Task<TicketResponseDto> AddAsync(TicketCreateDTO ticketCreateDTO);
+        Task<TicketResponseDto> UpdateAsync(int id, TicketUpdateDTO ticketUpdateDTO);
+        Task<TicketResponseDto> DeleteAsync(int id);
+
+        Task<TicketResponseDto> GetTicketsByPriorityAsync(int priorityId);
+        Task<TicketResponseDto> GetTicketsByStatusAsync(int statusId);
     }
 }

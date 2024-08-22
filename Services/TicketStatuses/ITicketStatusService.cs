@@ -1,13 +1,15 @@
-﻿using Server.Models;
+﻿using Server.DTOs.TicketsDTOs;
+using Server.DTOs.TicketStatusesDTOs;
+using Server.Models;
 
 namespace Server.Services.TicketStatuses
 {
     public interface ITicketStatusService
     {
-        Task<TicketStatus> GetByIdAsync(int id);
-        Task<IEnumerable<TicketStatus>> GetAllAsync();
-        Task AddAsync(TicketStatus ticketStatus);
-        Task UpdateAsync(TicketStatus ticketStatus);
-        Task DeleteAsync(int id);
+        Task<TicketStatusDTO> GetByIdAsync(int id);
+        Task<IEnumerable<TicketStatusDTO>> GetAllAsync();
+        Task<TicketResponseDto> AddAsync(TicketStatusCreateDTO ticketStatusCreateDTO);
+        Task<TicketResponseDto> UpdateAsync(int id, TicketStatusUpdateDTO ticketStatusUpdateDTO);
+        Task<TicketResponseDto> DeleteAsync(int id);
     }
 }

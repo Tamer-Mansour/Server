@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Server.DTOs.TicketStatusesDTOs;
-using Server.Models;
 using Server.Services.TicketStatuses;
-using Server.Utilities;
 
 namespace Server.Controllers
 {
@@ -20,75 +18,36 @@ namespace Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var ticketStatus = await _ticketStatusService.GetByIdAsync(id);
-            if (ticketStatus == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket status", id, "retrieved", 404));
-            }
-
-            var ticketStatusDto = new TicketStatusDTO
-            {
-                StatusId = ticketStatus.StatusId,
-                StatusName = ticketStatus.StatusName
-            };
-
-            return Ok(ticketStatusDto);
+            var result = await _ticketStatusService.GetByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
-            var ticketStatuses = await _ticketStatusService.GetAllAsync();
-            var ticketStatusDtos = ticketStatuses.Select(ticketStatus => new TicketStatusDTO
-            {
-                StatusId = ticketStatus.StatusId,
-                StatusName = ticketStatus.StatusName
-            }).ToList();
-
-            return Ok(ticketStatusDtos);
+            var result = await _ticketStatusService.GetAllAsync();
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddAsync(TicketStatusCreateDTO ticketStatusCreateDto)
         {
-            var ticketStatus = new TicketStatus
-            {
-                StatusName = ticketStatusCreateDto.StatusName
-            };
-
-            await _ticketStatusService.AddAsync(ticketStatus);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket status created successfully", 201));
+            var result = await _ticketStatusService.AddAsync(ticketStatusCreateDto);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, TicketStatusDTO ticketStatusDto)
+        public async Task<IActionResult> UpdateAsync(int id, TicketStatusUpdateDTO ticketStatusUpdateDTO)
         {
-            var ticketStatus = await _ticketStatusService.GetByIdAsync(id);
-            if (ticketStatus == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket status", id, "updated", 404));
-            }
-
-            ticketStatus.StatusName = ticketStatusDto.StatusName;
-
-            await _ticketStatusService.UpdateAsync(ticketStatus);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket status updated successfully", 200));
+            var result = await _ticketStatusService.UpdateAsync(id, ticketStatusUpdateDTO);
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var ticketStatus = await _ticketStatusService.GetByIdAsync(id);
-            if (ticketStatus == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket status", id, "deleted", 404));
-            }
-
-            await _ticketStatusService.DeleteAsync(id);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket status deleted successfully", 200));
+            var result = await _ticketStatusService.DeleteAsync(id);
+            return Ok(result);
         }
     }
 }

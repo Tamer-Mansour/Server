@@ -20,79 +20,37 @@ namespace Server.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var ticketCategoryAssignment = await _ticketCategoryAssignmentService.GetByIdAsync(id);
-            if (ticketCategoryAssignment == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket category assignment", id, "retrieved", 404));
-            }
-
-            var ticketCategoryAssignmentDto = new TicketCategoryAssignmentDTO
-            {
-                AssignmentId = ticketCategoryAssignment.AssignmentId,
-                TicketId = ticketCategoryAssignment.TicketId,
-                CategoryId = ticketCategoryAssignment.CategoryId
-            };
-
-            return Ok(ticketCategoryAssignmentDto);
+            var result = await _ticketCategoryAssignmentService.GetByIdAsync(id);
+            return Ok(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(int pageNumber, int pageSize)
         {
-            var ticketCategoryAssignments = await _ticketCategoryAssignmentService.GetAllAsync();
-            var ticketCategoryAssignmentDtos = ticketCategoryAssignments.Select(ticketCategoryAssignment => new TicketCategoryAssignmentDTO
-            {
-                AssignmentId = ticketCategoryAssignment.AssignmentId,
-                TicketId = ticketCategoryAssignment.TicketId,
-                CategoryId = ticketCategoryAssignment.CategoryId
-            }).ToList();
-
-            return Ok(ticketCategoryAssignmentDtos);
+            var result = await _ticketCategoryAssignmentService.GetAllAsync(pageNumber, pageSize);
+            return Ok(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddAsync(TicketCategoryAssignmentCreateDTO ticketCategoryAssignmentCreateDto)
         {
-            var ticketCategoryAssignment = new TicketCategoryAssignment
-            {
-                TicketId = ticketCategoryAssignmentCreateDto.TicketId,
-                CategoryId = ticketCategoryAssignmentCreateDto.CategoryId
-            };
-
-            await _ticketCategoryAssignmentService.AddAsync(ticketCategoryAssignment);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket category assignment created successfully", 201));
+            var result = await _ticketCategoryAssignmentService.AddAsync(ticketCategoryAssignmentCreateDto);
+            return Ok(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, TicketCategoryAssignmentDTO ticketCategoryAssignmentDto)
+        public async Task<IActionResult> UpdateAsync(int id, TicketCategoryAssignmentUpdateDTO ticketCategoryAssignmentUpdateDTO)
         {
-            var ticketCategoryAssignment = await _ticketCategoryAssignmentService.GetByIdAsync(id);
-            if (ticketCategoryAssignment == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket category assignment", id, "updated", 404));
-            }
+            var result = await _ticketCategoryAssignmentService.UpdateAsync(id, ticketCategoryAssignmentUpdateDTO);
+            return Ok(result);
 
-            ticketCategoryAssignment.TicketId = ticketCategoryAssignmentDto.TicketId;
-            ticketCategoryAssignment.CategoryId = ticketCategoryAssignmentDto.CategoryId;
-
-            await _ticketCategoryAssignmentService.UpdateAsync(ticketCategoryAssignment);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket category assignment updated successfully", 200));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var ticketCategoryAssignment = await _ticketCategoryAssignmentService.GetByIdAsync(id);
-            if (ticketCategoryAssignment == null)
-            {
-                return NotFound(ResponseHelper.CreateDynamicErrorResponse("Ticket category assignment", id, "deleted", 404));
-            }
-
-            await _ticketCategoryAssignmentService.DeleteAsync(id);
-
-            return Ok(ResponseHelper.CreateResponse(true, "Ticket category assignment deleted successfully", 200));
+            var result = await _ticketCategoryAssignmentService.DeleteAsync(id);
+            return Ok(result);
         }
     }
 }

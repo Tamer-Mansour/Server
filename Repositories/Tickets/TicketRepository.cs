@@ -13,9 +13,16 @@ namespace Server.Repositories.Tickets
             _context = context;
         }
 
-        public async Task<IEnumerable<Ticket>> GetAllAsync()
+        public async Task<IEnumerable<Ticket>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.Tickets.ToListAsync();
+            return await _context.Tickets
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+        public async Task<int> GetCountAsync()
+        {
+            return await _context.Tickets.CountAsync();
         }
 
         public async Task<Ticket> GetByIdAsync(int id)
@@ -35,14 +42,26 @@ namespace Server.Repositories.Tickets
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Ticket ticket)
         {
-            var ticket = await _context.Tickets.FindAsync(id);
-            if (ticket != null)
-            {
-                _context.Tickets.Remove(ticket);
-                await _context.SaveChangesAsync();
-            }
+            _context.Tickets.Remove(ticket);
+            await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Ticket>> GetByPriorityAsync(int priorityId)
+        {
+            return await _context.Tickets
+                .Where(t => t.PriorityId == priorityId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Ticket>> GetByStatusAsync(int statusId)
+        {
+            return await _context.Tickets
+                .Where(t => t.StatusId == statusId)
+                .ToListAsync();
+        }
+
+
     }
 }

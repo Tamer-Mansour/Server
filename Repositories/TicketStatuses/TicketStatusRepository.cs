@@ -40,14 +40,10 @@ namespace Server.Repositories.TicketStatuses
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(TicketStatus ticketStatus)
         {
-            var ticketStatus = await GetByIdAsync(id);
-            if (ticketStatus != null)
-            {
-                _context.TicketStatuses.Remove(ticketStatus);
-                await _context.SaveChangesAsync();
-            }
+            _context.TicketStatuses.Remove(ticketStatus);
+            await _context.SaveChangesAsync();
         }
     }
 }

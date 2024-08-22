@@ -22,12 +22,14 @@ namespace Server.Repositories.TicketHistories
                 .FirstOrDefaultAsync(h => h.HistoryId == id);
         }
 
-        public async Task<IEnumerable<TicketHistory>> GetAllAsync()
+        public async Task<IEnumerable<TicketHistory>> GetAllAsync(int pageNumber, int pageSize)
         {
             return await _context.TicketHistories
                 .Include(h => h.Ticket)
                 .Include(h => h.User)
-                .Include(h => h.TicketAction) 
+                .Include(h => h.TicketAction)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
         }
 
@@ -43,14 +45,14 @@ namespace Server.Repositories.TicketHistories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(TicketHistory ticketHistory)
         {
-            var ticketHistory = await GetByIdAsync(id);
-            if (ticketHistory != null)
-            {
-                _context.TicketHistories.Remove(ticketHistory);
-                await _context.SaveChangesAsync();
-            }
+            _context.TicketHistories.Remove(ticketHistory);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<int> GetCountAsync()
+        {
+            return await _context.TicketHistories.CountAsync();
         }
     }
 }

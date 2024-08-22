@@ -18,9 +18,12 @@ namespace Server.Repositories.TicketCategoryAssignments
             return await _context.TicketCategoryAssignments.FindAsync(id);
         }
 
-        public async Task<IEnumerable<TicketCategoryAssignment>> GetAllAsync()
+        public async Task<IEnumerable<TicketCategoryAssignment>> GetAllAsync(int pageNumber, int pageSize)
         {
-            return await _context.TicketCategoryAssignments.ToListAsync();
+            return await _context.TicketCategoryAssignments
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
         public async Task AddAsync(TicketCategoryAssignment ticketCategoryAssignment)
@@ -35,14 +38,20 @@ namespace Server.Repositories.TicketCategoryAssignments
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(TicketCategoryAssignment ticketCategoryAssignment)
         {
-            var ticketCategoryAssignment = await GetByIdAsync(id);
-            if (ticketCategoryAssignment != null)
-            {
-                _context.TicketCategoryAssignments.Remove(ticketCategoryAssignment);
-                await _context.SaveChangesAsync();
-            }
+            _context.TicketCategoryAssignments.Remove(ticketCategoryAssignment);
+            await _context.SaveChangesAsync();
+        }
+        public async Task<int> GetCountAsync()
+        {
+            return await _context.TicketCategoryAssignments.CountAsync();
+        }
+
+        public async Task<TicketCategoryAssignment> GetByTicketIdAndCategoryIdAsync(int ticketId, int categoryId)
+        {
+            return await _context.TicketCategoryAssignments
+                .FirstOrDefaultAsync(tca => tca.TicketId == ticketId && tca.CategoryId == categoryId);
         }
     }
 }
