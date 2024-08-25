@@ -68,7 +68,7 @@ namespace Server.Services.TicketPriorities
         public async Task<TicketResponseDto> DeleteAsync(int id)
         {
             var ticketPriority = await _repository.GetByIdAsync(id);
-            if (ticketPriority != null)
+            if (ticketPriority == null)
             {
                 return new TicketResponseDto
                 {

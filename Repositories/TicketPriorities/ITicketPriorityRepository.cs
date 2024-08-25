@@ -1,4 +1,5 @@
-﻿using Server.Models;
+﻿using Server.DTOs.TicketCommentsDTOs;
+using Server.Models;
 
 namespace Server.Repositories.TicketPriorities
 {

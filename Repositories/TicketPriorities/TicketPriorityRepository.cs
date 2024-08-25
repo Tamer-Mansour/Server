@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol.Core.Types;
 using Server.Data;
+using Server.DTOs.TicketCommentsDTOs;
 using Server.Models;
 
 namespace Server.Repositories.TicketPriorities
@@ -44,5 +46,7 @@ namespace Server.Repositories.TicketPriorities
             _context.TicketPriorities.Remove(ticketPriority);
             await _context.SaveChangesAsync();
         }
+
+       
     }
 }

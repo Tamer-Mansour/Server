@@ -23,6 +23,13 @@ namespace Server.Services.TicketComments
             var ticketComment = await _repository.GetByIdAsync(id);
             return ticketComment != null ? _mapper.Map<TicketCommentDTO>(ticketComment) : null;
         }
+        public async Task<IEnumerable<TicketCommentDTO>> GetByTicketIdAsync(int ticketId)
+        {
+            var comments = await _repository.GetByTicketIdAsync(ticketId);
+            return comments != null
+                ? _mapper.Map<IEnumerable<TicketCommentDTO>>(comments)
+                : Enumerable.Empty<TicketCommentDTO>();
+        }
 
         public async Task<PaginatedResult<TicketCommentDTO>> GetAllAsync(int pageNumber, int pageSize)
         {
@@ -96,5 +103,6 @@ namespace Server.Services.TicketComments
                 MessageCode = 200,
             };
         }
+       
     }
 }

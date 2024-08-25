@@ -48,5 +48,13 @@ namespace Server.Repositories.TicketComments
         {
             return await _context.TicketComments.CountAsync();
         }
+        public async Task<IEnumerable<TicketComment>> GetByTicketIdAsync(int ticketId)
+        {
+            return await _context.TicketComments
+               .Include(c => c.User)
+               .Where(c => c.TicketId == ticketId)
+               .ToListAsync();
+        }
     }
+
 }

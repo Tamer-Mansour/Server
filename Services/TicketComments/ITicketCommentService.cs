@@ -9,6 +9,7 @@ namespace Server.Services.TicketComments
     {
         Task<TicketCommentDTO> GetByIdAsync(int id);
         Task<PaginatedResult<TicketCommentDTO>> GetAllAsync(int pageNumber, int pageSize);
+        Task<IEnumerable<TicketCommentDTO>> GetByTicketIdAsync(int ticketId);
         Task<TicketResponseDto> AddAsync(TicketCommentCreateDTO ticketCommentCreateDTO);
         Task<TicketResponseDto> UpdateAsync(int id, TicketCommentUpdateDTO ticketCommentUpdateDTO);
         Task<TicketResponseDto> DeleteAsync(int id);

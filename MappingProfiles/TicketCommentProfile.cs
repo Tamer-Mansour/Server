@@ -9,7 +9,9 @@ namespace Server.MappingProfiles
         public TicketCommentProfile()
         {
             // Mapping between TicketComment model and TicketCommentDTO
-            CreateMap<TicketComment, TicketCommentDTO>().ReverseMap();
+            CreateMap<TicketComment, TicketCommentDTO>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.UserName))
+                .ReverseMap();
 
             // Mapping for creating/updating TicketComment
             CreateMap<TicketComment, TicketCommentCreateDTO>().ReverseMap();

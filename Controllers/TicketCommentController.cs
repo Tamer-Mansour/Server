@@ -54,5 +54,11 @@ namespace Server.Controllers
             var result = await _ticketCommentService.DeleteAsync(id);
             return Ok(result);
         }
+        [HttpGet("ticket/{ticketId}")]
+        public async Task<IActionResult> GetByTicketIdAsync(int ticketId)
+        {
+            var result = await _ticketCommentService.GetByTicketIdAsync(ticketId);
+            return Ok(result);
+        }
     }
 }
