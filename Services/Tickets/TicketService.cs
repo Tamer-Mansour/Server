@@ -76,7 +76,7 @@ namespace Server.Services.Tickets
                     {
                         IsSuccess = false,
                         Message = $"This ticket is assigned to {assignedUser.FullName}. You do not have permission to edit it.",
-                        MessageCode = 403
+                        MessageCode = 404
                     };
                 }
             }

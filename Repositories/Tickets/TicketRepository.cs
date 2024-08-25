@@ -16,9 +16,13 @@ namespace Server.Repositories.Tickets
         public async Task<IEnumerable<Ticket>> GetAllAsync(int pageNumber, int pageSize)
         {
             return await _context.Tickets
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            .Include(t => t.TicketStatus)
+            .Include(t => t.TicketPriority)
+            .Include(t => t.User)
+            .Include(t => t.AssignedByUser)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
         }
         public async Task<int> GetCountAsync()
         {
@@ -27,7 +31,12 @@ namespace Server.Repositories.Tickets
 
         public async Task<Ticket> GetByIdAsync(int id)
         {
-            return await _context.Tickets.FindAsync(id);
+            return await _context.Tickets
+              .Include(t => t.TicketStatus)
+              .Include(t => t.TicketPriority)
+              .Include(t => t.User)
+              .Include(t => t.AssignedByUser)
+              .FirstOrDefaultAsync(t => t.TicketId == id);
         }
 
         public async Task AddAsync(Ticket ticket)
@@ -51,29 +60,45 @@ namespace Server.Repositories.Tickets
         public async Task<IEnumerable<Ticket>> GetByPriorityAsync(int priorityId)
         {
             return await _context.Tickets
-                .Where(t => t.PriorityId == priorityId)
-                .ToListAsync();
+        .Include(t => t.TicketStatus)
+        .Include(t => t.TicketPriority)
+        .Include(t => t.User)
+        .Include(t => t.AssignedByUser)
+        .Where(t => t.PriorityId == priorityId)
+        .ToListAsync();
         }
 
         public async Task<IEnumerable<Ticket>> GetByStatusAsync(int statusId)
         {
             return await _context.Tickets
-                .Where(t => t.StatusId == statusId)
-                .ToListAsync();
+        .Include(t => t.TicketStatus)
+        .Include(t => t.TicketPriority)
+        .Include(t => t.User)
+        .Include(t => t.AssignedByUser)
+        .Where(t => t.StatusId == statusId)
+        .ToListAsync();
         }
 
         public async Task<IEnumerable<Ticket>> GetTicketsByUserAsync(string userId)
         {
             return await _context.Tickets
-                .Where(t => t.UserId == userId)
-                .ToListAsync();
+       .Include(t => t.TicketStatus)
+       .Include(t => t.TicketPriority)
+       .Include(t => t.User)
+       .Include(t => t.AssignedByUser)
+       .Where(t => t.UserId == userId)
+       .ToListAsync();
         }
 
         public async Task<IEnumerable<Ticket>> GetTicketsAssignedToUserAsync(string userId)
         {
             return await _context.Tickets
-                .Where(t => t.AssignedByUserId == userId)
-                .ToListAsync();
+        .Include(t => t.TicketStatus)
+        .Include(t => t.TicketPriority)
+        .Include(t => t.User)
+        .Include(t => t.AssignedByUser)
+        .Where(t => t.AssignedByUserId == userId)
+        .ToListAsync();
         }
 
         public async Task<User> GetUserByIdAsync(string userId)
