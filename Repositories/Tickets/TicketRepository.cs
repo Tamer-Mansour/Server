@@ -24,6 +24,19 @@ namespace Server.Repositories.Tickets
             .Take(pageSize)
             .ToListAsync();
         }
+
+        public async Task<IEnumerable<Ticket>> GetActiveTicketsAsync(int pageNumber, int pageSize)
+        {
+            return await _context.Tickets
+            .Include(t => t.TicketStatus)
+            .Include(t => t.TicketPriority)
+            .Include(t => t.User)
+            .Include(t => t.AssignedByUser)
+            .Where(t => !t.TicketHistories.Any())
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        }
         public async Task<int> GetCountAsync()
         {
             return await _context.Tickets.CountAsync();

@@ -16,7 +16,10 @@ namespace Server.Repositories.TicketHistories
         public async Task<TicketHistory> GetByIdAsync(int id)
         {
             return await _context.TicketHistories
+               .Include(h => h.Ticket)
+                .ThenInclude(t => t.User) 
                 .Include(h => h.Ticket)
+                .ThenInclude(t => t.AssignedByUser)
                 .Include(h => h.User)
                 .Include(h => h.TicketAction)
                 .FirstOrDefaultAsync(h => h.HistoryId == id);
@@ -26,6 +29,9 @@ namespace Server.Repositories.TicketHistories
         {
             return await _context.TicketHistories
                 .Include(h => h.Ticket)
+                .ThenInclude(t => t.User)
+                .Include(h => h.Ticket)
+                .ThenInclude(t => t.AssignedByUser) 
                 .Include(h => h.User)
                 .Include(h => h.TicketAction)
                 .Skip((pageNumber - 1) * pageSize)

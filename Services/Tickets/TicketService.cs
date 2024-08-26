@@ -32,6 +32,21 @@ namespace Server.Services.Tickets
             };
         }
 
+        public async Task<PaginatedResult<TicketDTO>> GetActiveTicketsAsync(int pageNumber, int pageSize)
+        {
+            var tickets = await _repository.GetActiveTicketsAsync(pageNumber, pageSize);
+            var totalItems = await _repository.GetCountAsync();
+
+            var ticketDtos = _mapper.Map<IEnumerable<TicketDTO>>(tickets);
+            return new PaginatedResult<TicketDTO>
+            {
+                Items = ticketDtos,
+                TotalCount = totalItems,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+        }
+
         public async Task<TicketDTO> GetByIdAsync(int id)
         {
             var ticket = await _repository.GetByIdAsync(id);

@@ -7,6 +7,7 @@ namespace Server.Services.Tickets
     public interface ITicketService
     {
         Task<PaginatedResult<TicketDTO>> GetAllAsync(int pageNumber, int pageSize);
+        Task<PaginatedResult<TicketDTO>> GetActiveTicketsAsync(int pageNumber, int pageSize);
         Task<TicketDTO> GetByIdAsync(int id);
         Task<TicketResponseDto> AddAsync(TicketCreateDTO ticketCreateDTO, string? assignedByUserId = null);
 

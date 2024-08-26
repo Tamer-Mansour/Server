@@ -32,6 +32,12 @@ namespace Server.Controllers
             var result = await _ticketService.GetAllAsync(pageNumber, pageSize);
             return Ok(result);
         }
+        [HttpGet("active-tickets")]
+        public async Task<IActionResult> GetActiveTickets(int pageNumber, int pageSize)
+        {
+            var result = await _ticketService.GetActiveTicketsAsync(pageNumber, pageSize);
+            return Ok(result);
+        }
 
         [HttpPost]
         public async Task<IActionResult> AddAsync(TicketCreateDTO ticketCreateDto)

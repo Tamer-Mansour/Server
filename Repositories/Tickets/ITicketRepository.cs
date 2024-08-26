@@ -1,10 +1,13 @@
-﻿using Server.Models;
+﻿using Server.DTOs.TicketsDTOs;
+using Server.Models;
 
 namespace Server.Repositories.Tickets
 {
     public interface ITicketRepository
     {
         Task<IEnumerable<Ticket>> GetAllAsync(int pageNumber, int pageSize);
+
+        Task<IEnumerable<Ticket>> GetActiveTicketsAsync(int pageNumber, int pageSize);
         Task<Ticket> GetByIdAsync(int id);
         Task AddAsync(Ticket ticket);
         Task UpdateAsync(Ticket ticket);

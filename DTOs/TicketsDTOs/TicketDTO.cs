@@ -9,10 +9,10 @@
         public string StatusName { get; set; } = string.Empty;
         public int PriorityId { get; set; }
         public string PriorityName { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
         public DateTime? ResolvedAt { get; set; }
-        public DateTime? ClosedAt { get; set; }
+        public DateTime? ClosedAt { get; set; } 
         public string UserId { get; set; }
         public string UserFullName { get; set; } = string.Empty;
         public string? AssignedByUserId { get; set; }
