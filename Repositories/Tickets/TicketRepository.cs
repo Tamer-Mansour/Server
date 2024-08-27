@@ -49,13 +49,13 @@ namespace Server.Repositories.Tickets
         public async Task<Ticket> GetByIdAsync(int id)
         {
             return await _context.Tickets
-            .Include(t => t.TicketStatus)
-            .Include(t => t.TicketPriority)
-            .Include(t => t.User)
-            .Include(t => t.AssignedByUser)
-            .Include(t => t.TicketCategoryAssignments)
-                .ThenInclude(tca => tca.TicketCategory)
-            .FirstOrDefaultAsync(t => t.TicketId == id);
+        .Include(t => t.TicketStatus)
+        .Include(t => t.TicketPriority)
+        .Include(t => t.User)
+        .Include(t => t.AssignedByUser) // Ensure this is included
+        .Include(t => t.TicketCategoryAssignments)
+            .ThenInclude(tca => tca.TicketCategory)
+        .FirstOrDefaultAsync(t => t.TicketId == id);
         }
 
         public async Task AddAsync(Ticket ticket)

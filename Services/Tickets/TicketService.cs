@@ -101,12 +101,26 @@ namespace Server.Services.Tickets
                     {
                         IsSuccess = false,
                         Message = $"This ticket is assigned to {assignedUser.FullName}. You do not have permission to edit it.",
-                        MessageCode = 404
+                        MessageCode = 403
                     };
                 }
             }
 
-            _mapper.Map(ticketUpdateCustomerDTO, ticket);
+            // Update ticket properties
+            ticket.Title = ticketUpdateCustomerDTO.Title;
+            ticket.Description = ticketUpdateCustomerDTO.Description;
+            ticket.StatusId = ticketUpdateCustomerDTO.StatusId;
+            ticket.PriorityId = ticketUpdateCustomerDTO.PriorityId;
+            ticket.UpdatedAt = ticketUpdateCustomerDTO.UpdatedAt;
+
+            // Update ticket categories
+            ticket.TicketCategoryAssignments.Clear(); // Remove existing categories
+            ticket.TicketCategoryAssignments.Add(new TicketCategoryAssignment
+            {
+                CategoryId = ticketUpdateCustomerDTO.CategoryId,
+                Ticket = ticket
+            });
+
             await _repository.UpdateAsync(ticket);
 
             return new TicketResponseDto
@@ -132,9 +146,6 @@ namespace Server.Services.Tickets
                 };
             }
 
-            // Validate the userId (this is where you could add additional validation logic if needed)
-
-            // Proceed with the update if the validation passes
             _mapper.Map(ticketUpdateSupportDTO, ticket);
             await _repository.UpdateAsync(ticket);
 

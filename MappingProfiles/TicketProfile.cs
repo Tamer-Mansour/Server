@@ -14,15 +14,15 @@ namespace Server.MappingProfiles
             .ForMember(dest => dest.PriorityName, opt => opt.MapFrom(src => src.TicketPriority.PriorityName))
             .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.User.FullName))
             .ForMember(dest => dest.AssignedByUserFullName, opt => opt.MapFrom(src => src.AssignedByUser != null ? src.AssignedByUser.FullName : string.Empty))
+            .ForMember(dest => dest.TicketCategoryName, opt => opt.MapFrom(src =>
+              string.Join(", ", src.TicketCategoryAssignments.Select(tca => tca.TicketCategory.CategoryName))))
             .ForMember(dest => dest.TicketCategoryName, opt => opt.MapFrom(src => string.Join(", ", src.TicketCategoryAssignments.Select(a => a.TicketCategory.CategoryName))));
 
             // Mapping for creating/updating Ticket
             CreateMap<Ticket, TicketCreateDTO>().ReverseMap();
             CreateMap<Ticket, TicketUpdateDTO>().ReverseMap();
 
-            CreateMap<Ticket, TicketDTO>()
-             .ForMember(dest => dest.TicketCategoryName, opt => opt.MapFrom(src =>
-              string.Join(", ", src.TicketCategoryAssignments.Select(tca => tca.TicketCategory.CategoryName))));
+             
 
             CreateMap<TicketUpdateSupportDTO, Ticket>()
             .ForMember(dest => dest.AssignedByUserId, opt => opt.MapFrom(src => src.AssignedByUserId));
