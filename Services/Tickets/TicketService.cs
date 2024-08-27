@@ -58,7 +58,8 @@ namespace Server.Services.Tickets
             var ticket = _mapper.Map<Ticket>(ticketCreateDTO);
             ticket.AssignedByUserId = assignedByUserId;
             ticket.TicketCategoryAssignments = new List<TicketCategoryAssignment>();
-            foreach (var categoryId in ticketCreateDTO.CategoryIds)
+
+            foreach (var categoryId in ticketCreateDTO.CategoryId)
             {
                 ticket.TicketCategoryAssignments.Add(new TicketCategoryAssignment
                 {
@@ -106,15 +107,13 @@ namespace Server.Services.Tickets
                 }
             }
 
-            // Update ticket properties
             ticket.Title = ticketUpdateCustomerDTO.Title;
             ticket.Description = ticketUpdateCustomerDTO.Description;
             ticket.StatusId = ticketUpdateCustomerDTO.StatusId;
             ticket.PriorityId = ticketUpdateCustomerDTO.PriorityId;
             ticket.UpdatedAt = ticketUpdateCustomerDTO.UpdatedAt;
 
-            // Update ticket categories
-            ticket.TicketCategoryAssignments.Clear(); // Remove existing categories
+            ticket.TicketCategoryAssignments.Clear();
             ticket.TicketCategoryAssignments.Add(new TicketCategoryAssignment
             {
                 CategoryId = ticketUpdateCustomerDTO.CategoryId,
