@@ -13,13 +13,20 @@ namespace Server.MappingProfiles
                 .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.TicketStatus.StatusName))
                 .ForMember(dest => dest.PriorityName, opt => opt.MapFrom(src => src.TicketPriority.PriorityName))
                 .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.User.FullName))
+                .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.TicketAttachments))
                 .ForMember(dest => dest.AssignedByUserFullName, opt => opt.MapFrom(src => src.AssignedByUser != null ? src.AssignedByUser.FullName : string.Empty))
                 .ForMember(dest => dest.CategoryId, opt => opt.MapFrom(src => src.TicketCategoryAssignments.FirstOrDefault() != null ? src.TicketCategoryAssignments.First().CategoryId : 0))
                 .ForMember(dest => dest.TicketCategoryName, opt => opt.MapFrom(src => string.Join(", ", src.TicketCategoryAssignments.Select(tca => tca.TicketCategory.CategoryName))));
 
             // Mapping for creating/updating Ticket
             CreateMap<TicketCreateDTO, Ticket>()
-                .ForMember(dest => dest.TicketCategoryAssignments, opt => opt.Ignore());
+                .ForMember(dest => dest.TicketCategoryAssignments, opt => opt.Ignore())
+                .ForMember(dest => dest.TicketAttachments, opt => opt.MapFrom(src => src.Attachments.Select(a => new TicketAttachment
+                {
+                    FilePath = a.FilePath,
+                    FileName = a.FileName,
+                    UploadedAt = a.UploadedAt
+                }).ToList()));
 
             CreateMap<Ticket, TicketCreateDTO>().ReverseMap();
 

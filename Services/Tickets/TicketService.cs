@@ -67,6 +67,20 @@ namespace Server.Services.Tickets
                     Ticket = ticket
                 });
             }
+            if (ticketCreateDTO.Attachments != null && ticketCreateDTO.Attachments.Any())
+            {
+                foreach (var attachmentDTO in ticketCreateDTO.Attachments)
+                {
+                    var attachment = new TicketAttachment
+                    {
+                        TicketId = ticket.TicketId,
+                        FilePath = attachmentDTO.FilePath,
+                        FileName = attachmentDTO.FileName,
+                        UploadedAt = attachmentDTO.UploadedAt
+                    };
+                    ticket.TicketAttachments.Add(attachment);
+                }
+            }
 
             await _repository.AddAsync(ticket);
 

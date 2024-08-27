@@ -1,4 +1,6 @@
-﻿namespace Server.DTOs.TicketsDTOs
+﻿using Server.DTOs.TicketAttachmentsDTOs;
+
+namespace Server.DTOs.TicketsDTOs
 {
     public class TicketCreateDTO
     {
@@ -8,6 +10,8 @@
         public int PriorityId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string UserId { get; set; } = string.Empty;
-        public List<int>CategoryId { get; set; } = new List<int>();
+        public List<int> CategoryId { get; set; } = new List<int>();
+        public List<TicketAttachmentCreateDTO> Attachments { get; set; } = new List<TicketAttachmentCreateDTO>();
+
     }
 }
