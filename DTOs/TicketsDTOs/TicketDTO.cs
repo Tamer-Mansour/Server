@@ -17,5 +17,6 @@
         public string UserFullName { get; set; } = string.Empty;
         public string? AssignedByUserId { get; set; }
         public string? AssignedByUserFullName { get; set; } = string.Empty;
+        public string? TicketCategoryName { get; set; } = string.Empty;
     }
 }

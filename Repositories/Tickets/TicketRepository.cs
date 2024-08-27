@@ -16,26 +16,30 @@ namespace Server.Repositories.Tickets
         public async Task<IEnumerable<Ticket>> GetAllAsync(int pageNumber, int pageSize)
         {
             return await _context.Tickets
-            .Include(t => t.TicketStatus)
-            .Include(t => t.TicketPriority)
-            .Include(t => t.User)
-            .Include(t => t.AssignedByUser)
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+             .Include(t => t.TicketStatus)
+             .Include(t => t.TicketPriority)
+             .Include(t => t.User)
+             .Include(t => t.AssignedByUser)
+             .Include(t => t.TicketCategoryAssignments)
+                 .ThenInclude(tca => tca.TicketCategory)
+             .Skip((pageNumber - 1) * pageSize)
+             .Take(pageSize)
+             .ToListAsync();
         }
 
         public async Task<IEnumerable<Ticket>> GetActiveTicketsAsync(int pageNumber, int pageSize)
         {
             return await _context.Tickets
             .Include(t => t.TicketStatus)
-            .Include(t => t.TicketPriority)
-            .Include(t => t.User)
-            .Include(t => t.AssignedByUser)
-            .Where(t => !t.TicketHistories.Any())
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync();
+             .Include(t => t.TicketPriority)
+             .Include(t => t.User)
+             .Include(t => t.AssignedByUser)
+             .Where(t => !t.TicketHistories.Any())
+             .Include(t => t.TicketCategoryAssignments)
+                 .ThenInclude(tca => tca.TicketCategory)
+             .Skip((pageNumber - 1) * pageSize)
+             .Take(pageSize)
+             .ToListAsync();
         }
         public async Task<int> GetCountAsync()
         {
@@ -45,11 +49,13 @@ namespace Server.Repositories.Tickets
         public async Task<Ticket> GetByIdAsync(int id)
         {
             return await _context.Tickets
-              .Include(t => t.TicketStatus)
-              .Include(t => t.TicketPriority)
-              .Include(t => t.User)
-              .Include(t => t.AssignedByUser)
-              .FirstOrDefaultAsync(t => t.TicketId == id);
+            .Include(t => t.TicketStatus)
+            .Include(t => t.TicketPriority)
+            .Include(t => t.User)
+            .Include(t => t.AssignedByUser)
+            .Include(t => t.TicketCategoryAssignments)
+                .ThenInclude(tca => tca.TicketCategory)
+            .FirstOrDefaultAsync(t => t.TicketId == id);
         }
 
         public async Task AddAsync(Ticket ticket)

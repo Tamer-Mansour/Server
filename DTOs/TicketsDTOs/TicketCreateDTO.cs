@@ -8,5 +8,6 @@
         public int PriorityId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string UserId { get; set; } = string.Empty;
+        public List<int>CategoryIds { get; set; } = new List<int>();
     }
 }

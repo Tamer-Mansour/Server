@@ -56,7 +56,17 @@ namespace Server.Services.Tickets
         public async Task<TicketResponseDto> AddAsync(TicketCreateDTO ticketCreateDTO, string? assignedByUserId = null)
         {
             var ticket = _mapper.Map<Ticket>(ticketCreateDTO);
-            ticket.AssignedByUserId = assignedByUserId; // Set the user who assigned the ticket
+            ticket.AssignedByUserId = assignedByUserId;
+            ticket.TicketCategoryAssignments = new List<TicketCategoryAssignment>();
+            foreach (var categoryId in ticketCreateDTO.CategoryIds)
+            {
+                ticket.TicketCategoryAssignments.Add(new TicketCategoryAssignment
+                {
+                    CategoryId = categoryId,
+                    Ticket = ticket
+                });
+            }
+
             await _repository.AddAsync(ticket);
 
             return new TicketResponseDto
