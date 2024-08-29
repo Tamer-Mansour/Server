@@ -94,5 +94,40 @@ namespace Server.Controllers
             var result = await _ticketService.GetTicketsAssignedToUserAsync(userId);
             return Ok(result);
         }
+
+        [HttpGet("count")]
+        public async Task<IActionResult> GetTotalTicketCount()
+        {
+            var count = await _ticketService.GetTotalTicketCountAsync();
+            return Ok(count);
+        }
+
+        [HttpGet("active/count")]
+        public async Task<IActionResult> GetActiveTicketCount()
+        {
+            var count = await _ticketService.GetActiveTicketCountAsync();
+            return Ok(count);
+        }
+
+        [HttpGet("resolved/count")]
+        public async Task<IActionResult> GetResolvedTicketCount()
+        {
+            var count = await _ticketService.GetResolvedTicketCountAsync();
+            return Ok(count);
+        }
+
+        [HttpGet("history/count")]
+        public async Task<IActionResult> GetHistoryTicketCount()
+        {
+            var count = await _ticketService.GetHistoryTicketCountAsync();
+            return Ok(count);
+        }
+
+        [HttpGet("category/{categoryId}")]
+        public async Task<IActionResult> GetTicketsByCategory(int categoryId)
+        {
+            var tickets = await _ticketService.GetTicketsByCategoryAsync(categoryId);
+            return Ok(tickets);
+        }
     }
 }

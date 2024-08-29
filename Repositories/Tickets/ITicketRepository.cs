@@ -21,6 +21,11 @@ namespace Server.Repositories.Tickets
         Task<IEnumerable<Ticket>> GetTicketsAssignedToUserAsync(string userId);
         Task<User> GetUserByIdAsync(string userId);
 
+        Task<int> GetTotalTicketCountAsync();
+        Task<int> GetActiveTicketCountAsync();
+        Task<int> GetResolvedTicketCountAsync();
+        Task<int> GetHistoryTicketCountAsync();
+        Task<IEnumerable<Ticket>> GetTicketsByCategoryAsync(int categoryId);
         //Task<IEnumerable<Ticket>> GetClosedTicketsAsync();
     }
 }

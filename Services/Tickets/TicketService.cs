@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using NuGet.Protocol.Core.Types;
 using Server.DTOs.Pagination;
 using Server.DTOs.TicketsDTOs;
 using Server.Models;
@@ -248,6 +249,32 @@ namespace Server.Services.Tickets
         public async Task<IEnumerable<TicketDTO>> GetTicketsAssignedToUserAsync(string userId)
         {
             var tickets = await _repository.GetTicketsAssignedToUserAsync(userId);
+            return _mapper.Map<IEnumerable<TicketDTO>>(tickets);
+        }
+
+        public async Task<int> GetTotalTicketCountAsync()
+        {
+            return await _repository.GetTotalTicketCountAsync();
+        }
+
+        public async Task<int> GetActiveTicketCountAsync()
+        {
+            return await _repository.GetActiveTicketCountAsync();
+        }
+
+        public async Task<int> GetResolvedTicketCountAsync()
+        {
+            return await _repository.GetResolvedTicketCountAsync();
+        }
+
+        public async Task<int> GetHistoryTicketCountAsync()
+        {
+            return await _repository.GetHistoryTicketCountAsync();
+        }
+
+        public async Task<IEnumerable<TicketDTO>> GetTicketsByCategoryAsync(int categoryId)
+        {
+            var tickets = await _repository.GetTicketsByCategoryAsync(categoryId);
             return _mapper.Map<IEnumerable<TicketDTO>>(tickets);
         }
     }

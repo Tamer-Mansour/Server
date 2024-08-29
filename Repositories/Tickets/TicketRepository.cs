@@ -127,5 +127,41 @@ namespace Server.Repositories.Tickets
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
         }
+
+        public async Task<int> GetTotalTicketCountAsync()
+        {
+            return await _context.Tickets.CountAsync();
+        }
+
+        public async Task<int> GetActiveTicketCountAsync()
+        {
+            return await _context.Tickets
+                .Where(t => !t.TicketHistories.Any())
+                .CountAsync();
+        }
+
+        public async Task<int> GetResolvedTicketCountAsync()
+        {
+            return await _context.Tickets
+                .Where(t => t.ResolvedAt != null && t.ClosedAt != null) 
+                .CountAsync();
+        }
+
+        public async Task<int> GetHistoryTicketCountAsync()
+        {
+            return await _context.Tickets
+                .Where(t => t.TicketHistories.Any())
+                .CountAsync();
+        }
+
+        public async Task<IEnumerable<Ticket>> GetTicketsByCategoryAsync(int categoryId)
+        {
+            return await _context.Tickets
+                .Include(t => t.TicketCategoryAssignments)
+                .Where(t => t.TicketCategoryAssignments.Any(tca => tca.CategoryId == categoryId))
+                .ToListAsync();
+        }
     }
+
+
 }
